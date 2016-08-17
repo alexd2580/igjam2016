@@ -7,17 +7,24 @@ lt.initialize({
     debug = true
 })
 
--- Graphic components
+-- components
 require("components/Drawable")
 
---Graphic systems
+-- systems
 DrawSystem = require("systems/DrawSystem")
+
+local Drawable = Component.load({'Drawable'})
 
 function love.load()
     engine = lt.Engine()
     world = love.physics.newWorld(0, 0, false)
     world:setCallbacks(beginContact, endContact)
     eventmanager = lt.EventManager()
+    engine:addSystem(DrawSystem())
+
+    entity = lt.Entity()
+    entity:add(Drawable(100, 100, 20))
+    engine:addEntity(entity)
 end
 
 function love.update(dt)

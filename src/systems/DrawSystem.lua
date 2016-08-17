@@ -6,6 +6,7 @@ function DrawSystem:draw()
         drawable = entity:get("Drawable")
         love.graphics.circle("fill", drawable.ox, drawable.oy, drawable.r, 100)
     end
+    print('lol')
 end
 
 function DrawSystem:requires()
