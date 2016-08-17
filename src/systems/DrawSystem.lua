@@ -11,10 +11,9 @@ function DrawSystem:draw()
         radius = physical.shape:getRadius()
         love.graphics.circle("fill", entity_x, entity_y, radius, 100)
 
-        dir = Vector.from_radians(angle)
-        love.graphics.setColor(255,255,255,255)
-        love.graphics.circle("fill", entity_x+20*dir.x, entity_y+20*dir.y, 5, 100)
-
+        --dir = Vector.from_radians(angle)
+        --love.graphics.setColor(255,255,255,255)
+        --love.graphics.circle("fill", entity_x+20*dir.x, entity_y+20*dir.y, 5, 100)
     end
 end
 
