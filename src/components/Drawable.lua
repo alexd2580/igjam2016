@@ -1,7 +1,5 @@
 local Drawable = Component.create("Drawable")
 
-function Drawable:initialize(ox, oy, r)
-    self.ox = ox
-    self.oy = oy
-    self.r = r
+function Drawable:initialize(color)
+    self.color = color or {255, 0, 0, 255}
 end
