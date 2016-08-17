@@ -1,13 +1,10 @@
-class = require('lib/middleclass')
-Vector = require('lib/vector')
-shine = require('lib/shine')
 lt = require('lib/lovetoys/lovetoys')
 lt.initialize({
     globals = true,
     debug = true
 })
+Vector = require('lib/vector')
 
--- components
 require("components/Drawable")
 
 -- systems
