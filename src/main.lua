@@ -10,6 +10,16 @@ Vector = require('lib/vector')
 local Resources = require('lib/Resources')
 require('lib/tables')
 
+require("components/Drawable")
+require("components/Physical")
+require("components/SwarmMember")
+require("components/HasEnemy")
+require("components/HasWeapon")
+require("components/Bullet")
+require("components/Shield")
+
+require('items')
+
 local MenuState = require('states/MenuState')
 
 function love.load()
@@ -26,7 +36,7 @@ function love.load()
     resources:load()
 
     resources.music.bg:setLooping(true)
-    love.audio.play(resources.music.bg)
+    -- love.audio.play(resources.music.bg)
 end
 
 function love.update(dt)

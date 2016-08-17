@@ -12,7 +12,6 @@ function AttackSystem:update(dt)
         --player_vector = Vector(player_x, player_y)
         enemy_mothership = entity:get('HasEnemy').enemy_mothership
         enemy_x, enemy_y = enemy_mothership:get('Physical').body:getPosition()
-        print(enemy_x, enemy_y)
         enemy_vector = Vector(mother_x, mother_y)
 
         body = entity:get('Physical').body
