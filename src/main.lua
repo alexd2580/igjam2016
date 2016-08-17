@@ -12,27 +12,30 @@ require("components/Drawable")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
+PlayerControlSystem = require("systems/PlayerControlSystem")
 
 local Drawable = Component.load({'Drawable'})
+player = nil
 
 function love.load()
     engine = lt.Engine()
     world = love.physics.newWorld(0, 0, false)
     world:setCallbacks(beginContact, endContact)
     eventmanager = lt.EventManager()
-    engine:addSystem(DrawSystem())
 
-    entity = lt.Entity()
-    entity:add(Drawable(100, 100, 20))
-    engine:addEntity(entity)
+    player = lt.Entity()
+    player:add(Drawable(100, 100, 20))
+
+    -- add systems to engine
+    engine:addSystem(DrawSystem())
+    engine:addSystem(PlayerControlSystem())
+
+    engine:addEntity(player)
 end
 
 function love.update(dt)
     engine:update(dt)
     world:update(dt)
-    if love.keyboard.isDown("a") then
-        print('a')
-    end
 end
 
 function love.keypressed(key)
