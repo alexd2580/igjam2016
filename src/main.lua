@@ -1,20 +1,21 @@
-class = require('lib/middleclass')
-Vector = require('lib/vector')
-shine = require('lib/shine')
 lt = require('lib/lovetoys/lovetoys')
 lt.initialize({
     globals = true,
     debug = true
 })
+Vector = require('lib/vector')
 
--- components
 require("components/Drawable")
+require("components/Physical")
+require("components/SwarmMember")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
 PlayerControlSystem = require("systems/PlayerControlSystem")
+SwarmSystem = require("systems/SwarmSystem")
 
 local Drawable = Component.load({'Drawable'})
+
 player = nil
 
 function love.load()
@@ -23,12 +24,12 @@ function love.load()
     world:setCallbacks(beginContact, endContact)
     eventmanager = lt.EventManager()
 
-    player = lt.Entity()
-    player:add(Drawable(100, 100, 20))
-
     -- add systems to engine
     engine:addSystem(DrawSystem())
     engine:addSystem(PlayerControlSystem())
+
+    player = lt.Entity()
+    player:add(Drawable(100, 100, 20))
 
     engine:addEntity(player)
 end
