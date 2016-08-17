@@ -6,7 +6,7 @@ function SwarmSystem:update()
         player_vector = Vector(player_x, player_y)
         member_x, member_y = entity:get('Physical').body:getPosition()
         member_vector = Vector(member_x, member_y)
-        relative = player_vector:subtract(member_vector)
+        relative = player_vector - member_vector
         direction = relative:normalize()
 
         entity_body = entity:get('Physical').body
