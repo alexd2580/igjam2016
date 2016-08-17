@@ -1,5 +1,7 @@
 local GameState = class('GameState', State)
 
+local CustomizeState = require('states/CustomizeState')
+
 require("components/Drawable")
 require("components/Physical")
 require("components/SwarmMember")
@@ -152,6 +154,9 @@ function GameState:draw()
 end
 
 function GameState:keypressed(key)
+    if key == "c" then
+        stack:push(CustomizeState())
+    end
 end
 
 return GameState
