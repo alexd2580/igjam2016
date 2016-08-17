@@ -132,7 +132,7 @@ function GameState:load()
     self.engine:addSystem(DrawSystem())
     self.engine:addSystem(PlayerControlSystem())
     self.engine:addSystem(SwarmSystem())
-    self.engine:addSystem(AttackSystem())
+    self.engine:addSystem(AttackSystem(self))
 
     player = self:create_mothership(100, 100)
     enemy = self:create_mothership(650, 650)
