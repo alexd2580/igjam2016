@@ -13,7 +13,7 @@ require('constants')
 local GameState = require('states/GameState')
 
 function love.load()
-    love.window.setMode(1000, 600, {fullscreen=false, vsync=true, resizable=false})
+    love.window.setMode(1000, 768, {fullscreen=false, vsync=true, resizable=false})
     stack = Stack()
     stack:push(GameState())
 end

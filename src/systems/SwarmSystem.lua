@@ -10,7 +10,7 @@ function SwarmSystem:update()
         body = entity:get('Physical').body
         member_x, member_y = body:getPosition()
         member_vector = Vector(member_x, member_y)
-        relative = mother_vector:subtract(member_vector)
+        relative = mother_vector - member_vector
         direction = relative:normalize()
 
         local force_factor = 2000

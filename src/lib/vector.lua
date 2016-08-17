@@ -103,4 +103,11 @@ function Vector:eq(vector)
     return false
 end
 
+Vector.__add = Vector.add
+Vector.__sub = Vector.subtract
+Vector.__mul = Vector.multiply
+Vector.__div = Vector.divide
+Vector.__mod = Vector.modulo
+Vector.__eq = Vector.eq
+
 return Vector
