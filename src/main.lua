@@ -7,17 +7,26 @@ lt.initialize({
 State = require('lib/State')
 Stack = require('lib/StackHelper')
 Vector = require('lib/vector')
+local Resources = require('lib/Resources')
 require('lib/tables')
 
-local GameState = require('states/GameState')
-local CustomizeState = require('states/CustomizeState')
+local MenuState = require('states/MenuState')
 
 function love.load()
     love.window.setMode(1000, 768, {fullscreen=false, vsync=true, resizable=false})
     require('constants')
 
     stack = Stack()
-    stack:push(GameState())
+    stack:push(MenuState())
+
+    resources = Resources()
+
+    resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
+
+    resources:load()
+
+    resources.music.bg:setLooping(true)
+    love.audio.play(resources.music.bg)
 end
 
 function love.update(dt)
