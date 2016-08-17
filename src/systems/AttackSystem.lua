@@ -1,16 +1,18 @@
 local AttackSystem = class("AttackSystem", System)
 
 function AttackSystem:initialize(gamestate)
+    System.initialize(self)
     self.gamestate = gamestate
 end
 
 
-function AttackSystem:update()
+function AttackSystem:update(dt)
     for k, entity in pairs(self.targets) do
         --player_x, player_y = player:get('Physical').body:getPosition()
         --player_vector = Vector(player_x, player_y)
         enemy_mothership = entity:get('HasEnemy').enemy_mothership
         enemy_x, enemy_y = enemy_mothership:get('Physical').body:getPosition()
+        print(enemy_x, enemy_y)
         enemy_vector = Vector(mother_x, mother_y)
 
         body = entity:get('Physical').body
@@ -24,14 +26,19 @@ function AttackSystem:update()
 
         shoot_angle = view_dir:dot(direction)
 
-        if shoot_angle > 0.9 then
-            gamestate:shoot_bullet(member_vector, view_dir, 10, enemy_mothership)
+        weapon = entity:get('HasWeapon')
+        weapon.since_last_fired = weapon.since_last_fired + dt
+
+        if shoot_angle > 0.95 and weapon.since_last_fired > weapon.cooldown then
+            weapon.since_last_fired = 0
+            self.gamestate:shoot_bullet(member_vector, view_dir, 100, enemy_mothership)
         end
+
     end
 end
 
 function AttackSystem:requires()
-    return {"HasEnemy", "Physical"}
+    return {"HasEnemy", "Physical", "HasWeapon"}
 end
 
 return AttackSystem

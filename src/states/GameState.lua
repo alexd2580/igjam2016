@@ -6,6 +6,8 @@ require("components/Drawable")
 require("components/Physical")
 require("components/SwarmMember")
 require("components/HasEnemy")
+require("components/HasWeapon")
+require("components/Bullet")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
@@ -13,8 +15,8 @@ PlayerControlSystem = require("systems/PlayerControlSystem")
 SwarmSystem = require("systems/SwarmSystem")
 AttackSystem = require("systems/AttackSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy'})
+local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet'})
 
 function GameState:create_mothership(x, y)
     local mothership = lt.Entity()
@@ -52,6 +54,7 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         swarm_member:add(Physical(body, fixture, shape))
         swarm_member:add(SwarmMember(mothership))
         swarm_member:add(HasEnemy(enemy_mothership))
+        swarm_member:add(HasWeapon())
         swarm_member:add(Drawable({0, 0, 255, 255}))
         self.engine:addEntity(swarm_member)
     end
@@ -60,19 +63,19 @@ end
 function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership)
     bullet = lt.Entity()
 
-    local body = love.physics:newBody(self.world, start_pos.x, start_pos.y, "dynamic")
+    local body = love.physics.newBody(self.world, start_pos.x, start_pos.y, "dynamic")
     body:setLinearDamping(0.0)
     local shape = love.physics.newCircleShape(1)
     local fixture = love.physics.newFixture(body, shape, 1)
+    fixture:setSensor(true)
     fixture:setRestitution(0.0)
     fixture:setUserData(bullet)
     body:setMass(0)
+    body:applyLinearImpulse(dir.x*speed, dir.y*speed)
 
     bullet:add(Physical(body, fixture, shape))
     bullet:add(HasEnemy(enemy_mothership))
     bullet:add(Drawable({0, 255, 0, 255}))
-
-    --bullet:Source:getVelocity()
 
     self.engine:addEntity(bullet)
 end
@@ -91,19 +94,24 @@ function bullet_hit_thing(a, b)
 end
 
 function beginContact(a, b, coll)
-    print(a, b)
+
     a = a:getUserData()
     b = b:getUserData()
-    print(a, b)
 
     local bullet, object = nil, nil
     if bullet_hit_thing(a, b) then
         bullet, object = a, b
+        print('rofl')
     elseif bullet_hit_thing(b, a) then
         bullet, object = b, a
+        print('rofl2')
     else
         return
     end
+
+    print('yay')
+
+
 
     enemy_mothership = bullet:get('HasEnemy').enemy_mothership
 
