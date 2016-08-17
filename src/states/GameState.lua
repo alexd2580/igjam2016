@@ -1,14 +1,5 @@
 local GameState = class('GameState', State)
 
-local CustomizeState = require('states/CustomizeState')
-
-require("components/Drawable")
-require("components/Physical")
-require("components/SwarmMember")
-require("components/HasEnemy")
-require("components/HasWeapon")
-require("components/Bullet")
-
 -- systems
 DrawSystem = require("systems/DrawSystem")
 PlayerControlSystem = require("systems/PlayerControlSystem")
@@ -17,6 +8,10 @@ AttackSystem = require("systems/AttackSystem")
 
 local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet'})
+
+function GameState:initialize(enabledItems)
+    self.enabledItems = enabledItems
+end
 
 function GameState:create_mothership(x, y)
     local mothership = lt.Entity()
@@ -50,6 +45,10 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         fixture:setRestitution(0.0)
         fixture:setUserData(swarm_member)
         body:setMass(2)
+
+        for id, _ in pairs(self.enabledItems) do
+            swarm_member:add(items[id].component())
+        end
 
         swarm_member:add(Physical(body, fixture, shape))
         swarm_member:add(SwarmMember(mothership))
@@ -178,9 +177,6 @@ function GameState:draw()
 end
 
 function GameState:keypressed(key)
-    if key == "c" then
-        stack:push(CustomizeState())
-    end
 end
 
 return GameState
