@@ -12,7 +12,7 @@ function AttackSystem:update(dt)
         --player_vector = Vector(player_x, player_y)
         enemy_mothership = entity:get('HasEnemy').enemy_mothership
         enemy_x, enemy_y = enemy_mothership:get('Physical').body:getPosition()
-        enemy_vector = Vector(mother_x, mother_y)
+        enemy_vector = Vector(enemy_x, enemy_y)
 
         body = entity:get('Physical').body
         member_x, member_y = body:getPosition()
@@ -29,6 +29,7 @@ function AttackSystem:update(dt)
         weapon.since_last_fired = weapon.since_last_fired + dt
 
         if shoot_angle > 0.95 and weapon.since_last_fired > weapon.cooldown then
+
             weapon.since_last_fired = 0
             self.gamestate:shoot_bullet(member_vector, view_dir, 100, enemy_mothership)
         end
