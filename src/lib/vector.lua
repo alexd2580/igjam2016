@@ -37,6 +37,10 @@ function Vector:normalize()
     return Vector(self.x / l, self.y / l)
 end
 
+function Vector:dot(other)
+    return other.x * self.x + other.y * self.y
+end
+
 function Vector:distanceTo(other)
     return self:subtract(other):length()
 end
@@ -101,6 +105,12 @@ function Vector:eq(vector)
         return vector.x == self.x and vector.y == self.y
     end
     return false
+end
+
+function Vector.from_radians(rad)
+    local x = math.cos(rad)
+    local y = math.sin(rad)
+    return Vector(x, y)
 end
 
 Vector.__add = Vector.add
