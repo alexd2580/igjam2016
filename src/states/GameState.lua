@@ -73,6 +73,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership)
     body:setMass(0)
     body:applyLinearImpulse(dir.x*speed, dir.y*speed)
 
+    bullet:add(Bullet())
     bullet:add(Physical(body, fixture, shape))
     bullet:add(HasEnemy(enemy_mothership))
     bullet:add(Drawable({0, 255, 0, 255}))
@@ -93,6 +94,8 @@ function bullet_hit_thing(a, b)
     return true -- a has hit something physical
 end
 
+local remove_entities_set = {}
+
 function beginContact(a, b, coll)
 
     a = a:getUserData()
@@ -101,29 +104,37 @@ function beginContact(a, b, coll)
     local bullet, object = nil, nil
     if bullet_hit_thing(a, b) then
         bullet, object = a, b
-        print('rofl')
     elseif bullet_hit_thing(b, a) then
         bullet, object = b, a
-        print('rofl2')
     else
         return
     end
 
-    print('yay')
-
-
+    if not remove_entities_set[bullet.id] == nil then
+        return
+    end
 
     enemy_mothership = bullet:get('HasEnemy').enemy_mothership
 
     if object == enemy_mothership then
-        print('MotherShip hit!')
+        mothership_hit(enemy_mothership, bullet)
     elseif object:has('SwarmMember') then
         -- object is a swarmmember
         object_mothership = object:get('SwarmMember').mothership
-        if enemy_mothership == other_mothership then
-            print('Enemy swarmmember hit')
+        if enemy_mothership == object_mothership then
+            drone_hit(object, bullet)
         end
     end
+end
+
+function mothership_hit(mothership, bullet)
+    print('MotherShip hit!')
+    remove_entities_set[bullet.id] = bullet
+end
+
+function drone_hit(drone, bullet)
+    print('Enemy swarmmember hit')
+    remove_entities_set[bullet.id] = bullet
 end
 
 function endContact(a, b, coll)
@@ -155,6 +166,11 @@ end
 function GameState:update(dt)
     self.engine:update(dt)
     self.world:update(dt)
+    for _,entity in pairs(remove_entities_set) do
+        entity:get('Physical').body:destroy()
+        self.engine:removeEntity(entity)
+    end
+    remove_entities_set = {}
 end
 
 function GameState:draw()
