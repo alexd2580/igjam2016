@@ -5,9 +5,10 @@ DrawSystem = require("systems/DrawSystem")
 PlayerControlSystem = require("systems/PlayerControlSystem")
 SwarmSystem = require("systems/SwarmSystem")
 AttackSystem = require("systems/AttackSystem")
+DeathSystem = require("systems/DeathSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet'})
+local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet, Health
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet', 'Health'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -55,6 +56,7 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         swarm_member:add(HasEnemy(enemy_mothership))
         swarm_member:add(HasWeapon())
         swarm_member:add(Drawable({0, 0, 255, 255}))
+        swarm_member:add(Health(10))
         self.engine:addEntity(swarm_member)
     end
 end
@@ -134,6 +136,7 @@ function GameState:load()
     self.engine:addSystem(PlayerControlSystem())
     self.engine:addSystem(SwarmSystem())
     self.engine:addSystem(AttackSystem(self))
+    self.engine:addSystem(DeathSystem())
 
     player = self:create_mothership(100, 100)
     enemy = self:create_mothership(650, 650)
