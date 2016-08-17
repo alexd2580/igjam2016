@@ -6,9 +6,12 @@ lt.initialize({
 Vector = require('lib/vector')
 
 require("components/Drawable")
+require("components/Physical")
+require("components/SwarmMember")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
+SwarmSystem = require("systems/SwarmSystem")
 
 local Drawable = Component.load({'Drawable'})
 
