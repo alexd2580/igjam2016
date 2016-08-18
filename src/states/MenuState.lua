@@ -6,7 +6,8 @@ local CustomizeState = require('states/CustomizeState')
 local CreditsState = require('states/CreditsState')
 
 function MenuState:update(dt)
-    suit.layout:reset(constants.screenWidth - 240, constants.screenHeight - 120, 10, 10)
+    suit.updateMouse(push:toGame(love.mouse.getPosition()))
+    suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
 
     if suit.Button("Start Game", suit.layout:row(200, 40)).hit then
         stack:push(CustomizeState())
@@ -18,11 +19,15 @@ function MenuState:update(dt)
 end
 
 function MenuState:draw()
+    push:apply("start")
     suit:draw()
+    push:apply("end")
 end
 
 function MenuState:keypressed(key)
-    stack:push(CustomizeState())
+    if key == "space" then
+        stack:push(CustomizeState())
+    end
 end
 
 return MenuState

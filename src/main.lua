@@ -28,12 +28,10 @@ require('items')
 local MenuState = require('states/MenuState')
 
 function love.load()
-    -- love.window.setMode(1366, 768, {fullscreen=false, vsync=true, resizable=true})
     love.graphics.setDefaultFilter('nearest', 'nearest', 0)
     glyph_string = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=[]\\,./;')!@#$%^&*(+{}!<>?:\""
     font = love.graphics.newImageFont('assets/img/font.png', glyph_string, 2)
     love.graphics.setFont(font)
-    require('constants')
 
     stack = Stack()
     stack:push(MenuState())
@@ -45,6 +43,9 @@ function love.load()
     resources:addImage('mask_base', 'assets/img/maskConfig/base.png')
     resources:addImage('block_particle', 'assets/img/block_particle.png')
     resources:addImage('round_particle', 'assets/img/round_particle.png')
+    resources:addImage('stars_bg', 'assets/img/stars_bg.png')
+    resources:addImage('stars_90', 'assets/img/stars_90.png')
+    resources:addImage('stars_180', 'assets/img/stars_180.png')
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
 
     resources:load()
