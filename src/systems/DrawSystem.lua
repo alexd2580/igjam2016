@@ -16,7 +16,8 @@ function DrawSystem:draw()
             local entity_x, entity_y, angle, sx, sy
             if entity:has('Pulse') then
                 local pulse = entity:get('Pulse')
-                print(pulse)
+                local blink = math.sin(pulse.time_since_last_pulse) * 10000
+                love.graphics.setColor(blink, blink, blink, 255)
             end
             if entity:has('Physical') then
                 local physical = entity:get('Physical')
@@ -55,9 +56,7 @@ function DrawSystem:draw()
                end
             end
 
-            if flash_white then
-                love.graphics.setColor(255,255,255,255)
-            end
+            love.graphics.setColor(255,255,255,255)
 
             if debug then
                 if entity:has('Physical') then

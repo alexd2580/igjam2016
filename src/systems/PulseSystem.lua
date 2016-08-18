@@ -3,9 +3,9 @@ local PulseSystem = class("PulseSystem", System)
 function PulseSystem:update(dt)
     for _, entity in pairs(self.targets) do
         local pulse = entity:get("Pulse")
-        pulse.period = pulse.period + dt
-        if pulse.period >= pulse.time_since_last_pulse then
-            pulse.period = 0
+        pulse.time_since_last_pulse = pulse.time_since_last_pulse + dt
+        if pulse.time_since_last_pulse >= pulse.period then
+            pulse.time_since_last_pulse = 0
         end
     end
 end

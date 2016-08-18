@@ -17,12 +17,14 @@ BulletHitSystem = require("systems/BulletHitSystem")
 MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
+PulseSystem = require("systems/PulseSystem")
 LaserSystem = require('systems/LaserSystem')
 
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse'})
 
-function GameState:initialize(enabledItems)
+function GameState:initialize(level, enabledItems)
+    self.level = level
     self.enabledItems = enabledItems
 end
 
@@ -121,7 +123,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     fixture:setUserData(bullet)
 
     local particlesystem = love.graphics.newParticleSystem(resources.images.block_particle, 32)
-    particlesystem:setParticleLifetime(0.2)
+    particlesystem:setParticleLifetime(0.1)
     particlesystem:setEmissionRate(64)
     particlesystem:setSizes(0.5, 0.1)
     particlesystem:setColors(255, 0, 10, 255, 255, 10, 10, 100)
@@ -132,7 +134,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     bullet:add(HasEnemy(enemy_mothership))
     bullet:add(Drawable(resources.images.fighter_missile))
     bullet:add(Health(1))
-    bullet:add(Pulse(0.5))
+    bullet:add(Pulse(0.2))
 
     self.engine:addEntity(bullet)
 end
@@ -217,6 +219,7 @@ function GameState:load()
     -- keep these two at the end
     self.engine:addSystem(DeathSystem())
     self.engine:addSystem(GameOverSystem())
+    self.engine:addSystem(PulseSystem())
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)
