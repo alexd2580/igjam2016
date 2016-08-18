@@ -22,6 +22,7 @@ require("components/Shield")
 require("components/Health")
 require("components/Particles")
 require("components/Mothership")
+require("components/Animation")
 
 require('items')
 

@@ -32,7 +32,7 @@ function AttackSystem:update(dt)
 
             weapon.since_last_fired = 0
             self.gamestate:shoot_bullet(
-                member_vector, view_dir, 100, enemy_mothership, weapon.damage)
+                member_vector, view_dir, 200, enemy_mothership, weapon.damage)
         end
 
     end
