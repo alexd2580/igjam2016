@@ -16,21 +16,21 @@ local push = {}
 setmetatable(push, push)
 
 function push:setupScreen(WWIDTH, WHEIGHT, RWIDTH, RHEIGHT, f)
-  
+
   f = f or {}
-  
+
   self._WWIDTH, self._WHEIGHT = WWIDTH, WHEIGHT
   self._RWIDTH, self._RHEIGHT = RWIDTH, RHEIGHT
   self._fullscreen = f.fullscreen or self._fullscreen or  false
   self._resizable = f.resizable or self._resizable or false
   if f.canvas == nil then f.canvas = true end
-  
+
   love.window.setMode( self._RWIDTH, self._RHEIGHT, {fullscreen = self._fullscreen, borderless = false, resizable = self._resizable} )
-  
+
   self:initValues()
-  
+
   if f.canvas then self:createCanvas() end
-  
+
   self._borderColor = {0, 0, 0}
 
 end
@@ -44,7 +44,7 @@ function push:initValues()
   self._SCALE = math.min(self._SCALEX, self._SCALEY)
   self._OFFSET = {x = (self._SCALEX - self._SCALE) * (self._WWIDTH/2), y = (self._SCALEY - self._SCALE) * (self._WHEIGHT/2)}
   self._GWIDTH, self._GHEIGHT = self._RWIDTH-self._OFFSET.x*2, self._RHEIGHT-self._OFFSET.y*2
-  
+
   self._INV_SCALE = 1/self._SCALE
 end
 
@@ -67,7 +67,7 @@ function push:apply(operation, shader)
     if self._canvas then
       love.graphics.pop()
       love.graphics.setCanvas()
-      
+
       love.graphics.translate(self._OFFSET.x, self._OFFSET.y)
       love.graphics.setColor(255, 255, 255)
       love.graphics.setShader(shader or self._shader)
@@ -96,7 +96,8 @@ end
 function push:toGame(x, y)
   x, y = x-self._OFFSET.x, y-self._OFFSET.y
   local normalX, normalY = x/self._GWIDTH, y/self._GHEIGHT
-  x, y = (x>=0 and x<=self._WWIDTH*self._SCALE) and normalX*self._WWIDTH or nil, (y>=0 and y<=self._WHEIGHT*self._SCALE) and normalY*self._WHEIGHT or nil
+  x = (x>=0 and x<=self._WWIDTH*self._SCALE) and normalX*self._WWIDTH or 0
+  y = (y>=0 and y<=self._WHEIGHT*self._SCALE) and normalY*self._WHEIGHT or 0
   return x, y
 end
 
