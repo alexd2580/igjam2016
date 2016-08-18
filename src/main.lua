@@ -40,7 +40,7 @@ function love.load()
 
     resources = Resources()
 
-    resources:addImage('fighter', 'assets/img/fighterConfig/fighter.png')
+    resources:addImage('fighter', 'assets/img/fighterConfig/fighterTiny.png')
     resources:addImage('fighter_missile', 'assets/img/fighterConfig/missile.png')
     resources:addImage('mask_base', 'assets/img/player/colorBlackSmall.png')
     resources:addImage('block_particle', 'assets/img/block_particle.png')
