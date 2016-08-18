@@ -1,7 +1,9 @@
 local Weapon = Component.create("Weapon")
 
-function Weapon:initialize()
-    self.cooldown = 1
+function Weapon:initialize(opts)
+    self.cooldown = opts.cooldown or 1
     self.since_last_fired = 0.0
-    self.damage = 30
+    self.hitChance = opts.hitChance
+    self.damage = opts.damage
+    self.type = opts.type
 end
