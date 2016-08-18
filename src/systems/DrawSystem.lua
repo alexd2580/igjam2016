@@ -3,13 +3,11 @@ local DrawSystem = class("DrawSystem", System)
 function DrawSystem:draw()
     for index, entity in pairs(self.targets) do
         drawable = entity:get("Drawable")
-        love.graphics.setColor(unpack(drawable.color))
 
         local physical = entity:get('Physical')
         entity_x, entity_y = physical.body:getPosition()
         angle = physical.body:getAngle()
-        radius = physical.shape:getRadius()
-        love.graphics.circle("fill", entity_x, entity_y, radius, 100)
+        love.graphics.draw(drawable.image, entity_x, entity_y, angle)
 
         --dir = Vector.from_radians(angle)
         --love.graphics.setColor(255,255,255,255)
