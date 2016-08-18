@@ -1,0 +1,3 @@
+[submodule "src/lib/lovetoys"]
+	path = src/lib/lovetoys
+	url = git@github.com:lovetoys/lovetoys
