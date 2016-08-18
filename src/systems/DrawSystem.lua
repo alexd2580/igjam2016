@@ -31,11 +31,12 @@ function DrawSystem:draw()
                     flash_white = true
                     hi.hit = false
                 end
+            else
+                flash_white = false
             end
 
             if flash_white then
-                love.graphics.setColorMode(ColorMode.combine)
-                love.graphics.setColor(255,255,255,255)
+                love.graphics.setColor(5000,5000,5000,255)
             end
 
             for i = 1, maxIndex, 1 do
@@ -51,7 +52,7 @@ function DrawSystem:draw()
             end
 
             if flash_white then
-                love.graphics.setColorMode(ColorMode.replace)
+                love.graphics.setColor(255,255,255,255)
             end
 
             if debug then
