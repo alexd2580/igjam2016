@@ -14,9 +14,10 @@ DeathSystem = require("systems/DeathSystem")
 ParticlesSystem = require("systems/ParticlesSystem")
 BulletHitSystem = require("systems/BulletHitSystem")
 MothershipSystem = require("systems/MothershipSystem")
+AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -26,12 +27,12 @@ function GameState:create_mothership(mothership, x, y, enemy)
     mothership:add(Drawable(resources.images.mask_base))
     local body = love.physics.newBody(self.world, x, y, "dynamic")
     body:setLinearDamping(0.999)
+    body:setMass(2)
     local shape = love.physics.newCircleShape(10)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setSensor(true)
     fixture:setRestitution(0.9)
     fixture:setUserData(mothership)
-    body:setMass(2)
 
     mothership:add(Health(10000))
     mothership:add(Mothership())
@@ -51,11 +52,11 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         body:setAngle(0)
         body:setAngularDamping(0.8)
         body:setLinearDamping(0.6)
+        body:setMass(2)
         local shape = love.physics.newCircleShape(10)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setRestitution(0.0)
         fixture:setUserData(drone)
-        body:setMass(2)
 
         for id, _ in pairs(self.enabledItems) do
             drone:add(items[id].component())
@@ -71,19 +72,56 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
     end
 end
 
+local scheduled_explosions = {}
+
+function GameState:schedule_explosion(target)
+    local t_body = target:get('Physical').body
+    local x, y = t_body:getPosition()
+    local angle = t_body:getAngle()
+    local vx, vy = t_body:getLinearVelocity()
+
+    scheduled_explosions[#scheduled_explosions+1] =
+        { x = x, y = y, angle = angle, vx = vx, vy = vy }
+end
+
+function GameState:spawn_explosions()
+    for i, exp_conf in pairs(scheduled_explosions) do
+        local explosion = lt.Entity()
+        local body = love.physics.newBody(self.world, exp_conf.x, exp_conf.y, "dynamic")
+        body:setAngle(exp_conf.angle)
+        body:setLinearVelocity(exp_conf.vx, exp_conf.vy)
+        body:setAngularDamping(0.0)
+        body:setLinearDamping(0.0)
+        body:setMass(0)
+        local shape = love.physics.newCircleShape(0)
+        local fixture = love.physics.newFixture(body, shape, 0)
+        fixture:setSensor(true)
+        fixture:setRestitution(0.0)
+        fixture:setUserData(explosion)
+
+        explosion:add(Physical(body, fixture, shape))
+        explosion:add(Health(1))
+        local images = {resources.images.fighter_missile, resources.images.fighter, resources.images.fighter_missile, resources.images.fighter, resources.images.fighter_missile, resources.images.fighter}
+        explosion:add(Animation(images, 10))
+
+        self.engine:addEntity(explosion)
+    end
+    scheduled_explosions = {}
+end
+
 function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     bullet = lt.Entity()
 
     local body = love.physics.newBody(self.world, start_pos.x, start_pos.y, "dynamic")
     body:setLinearDamping(0.0)
+    body:setMass(0)
+    body:applyLinearImpulse(dir.x*speed, dir.y*speed)
+    body:setAngle(dir:getRadian())
     local shape = love.physics.newCircleShape(1)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setSensor(true)
     fixture:setRestitution(0.0)
     fixture:setUserData(bullet)
-    body:setMass(0)
-    body:applyLinearImpulse(dir.x*speed, dir.y*speed)
-    body:setAngle(dir:getRadian())
 
     local particlesystem = love.graphics.newParticleSystem(resources.images.block_particle, 32)
     particlesystem:setParticleLifetime(2, 50) -- Particles live at least 2s and at most 5s.
@@ -142,6 +180,13 @@ function beginContact(a, b, coll)
     end
 end
 
+function GameState:delete_entity(entity)
+    self.engine:removeEntity(entity)
+    if entity:has("Physical") then
+        entity:get("Physical").body:destroy()
+    end
+end
+
 function GameState:load()
     self.engine = lt.Engine()
     self.world = love.physics.newWorld(0, 0, false)
@@ -162,6 +207,7 @@ function GameState:load()
     self.engine:addSystem(ParticlesSystem(), 'update')
     self.engine:addSystem(ParticlesSystem(), 'draw')
     self.engine:addSystem(MothershipSystem())
+    self.engine:addSystem(AnimatedDrawSystem())
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)
@@ -198,6 +244,8 @@ function GameState:update(dt)
     end
     self.engine:update(dt)
     self.world:update(dt)
+
+    self:spawn_explosions()
 end
 
 function GameState:draw()
