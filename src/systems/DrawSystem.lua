@@ -2,12 +2,21 @@ local DrawSystem = class("DrawSystem", System)
 
 function DrawSystem:draw()
     for index, entity in pairs(self.targets) do
-        drawable = entity:get("Drawable")
-
+        local drawable = entity:get("Drawable")
+        local image = drawable.image
         local physical = entity:get('Physical')
-        entity_x, entity_y = physical.body:getPosition()
-        angle = physical.body:getAngle()
-        love.graphics.draw(drawable.image, entity_x, entity_y, angle)
+        local entity_x, entity_y = physical.body:getPosition()
+        local angle = physical.body:getAngle()
+        love.graphics.draw(image,
+                           entity_x,
+                           entity_y,
+                           angle, 1, 1,
+                           image:getWidth() / 2,
+                           image:getHeight() / 2)
+
+        if debug then
+            love.graphics.circle("fill", entity_x, entity_y, physical.shape:getRadius(), 100)
+        end
 
         --dir = Vector.from_radians(angle)
         --love.graphics.setColor(255,255,255,255)

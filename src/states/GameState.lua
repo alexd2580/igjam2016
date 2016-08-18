@@ -81,6 +81,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     fixture:setUserData(bullet)
     body:setMass(0)
     body:applyLinearImpulse(dir.x*speed, dir.y*speed)
+    body:setAngle(dir:getRadian() - math.pi / 2)
 
     bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))

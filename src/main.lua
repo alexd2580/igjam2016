@@ -3,6 +3,7 @@ lt.initialize({
     globals = true,
     debug = true
 })
+debug = false
 
 State = require('lib/State')
 Stack = require('lib/StackHelper')
@@ -50,6 +51,9 @@ end
 function love.keypressed(key)
     if key == "escape" then
         love.event.quit()
+    end
+    if key == "0" then
+        debug = not debug
     end
 
     stack:current():keypressed(key)
