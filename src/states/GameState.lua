@@ -16,6 +16,7 @@ BulletHitSystem = require("systems/BulletHitSystem")
 MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
+LaserSystem = require('systems/LaserSystem')
 
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable'})
@@ -72,7 +73,6 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         drone:add(Physical(body, fixture, shape))
         drone:add(SwarmMember(mothership))
         drone:add(HasEnemy(enemy_mothership))
-        drone:add(Weapon())
         drone:add(Drawable(resources.images.fighter))
         drone:add(Health(100))
         self.engine:addEntity(drone)
@@ -207,6 +207,7 @@ function GameState:load()
     self.bg_pos60 = 0
 
     local particlesSystem = ParticlesSystem()
+    local laserSystem = LaserSystem()
 
     -- add systems to engine
     self.engine:addSystem(DrawSystem())
@@ -218,6 +219,10 @@ function GameState:load()
     self.engine:addSystem(particlesSystem, 'draw')
     self.engine:addSystem(MothershipSystem())
     self.engine:addSystem(AnimatedDrawSystem())
+    self.engine:addSystem(laserSystem, 'update')
+    self.engine:addSystem(laserSystem, 'draw')
+
+    -- keep these two at the end
     self.engine:addSystem(DeathSystem())
     self.engine:addSystem(GameOverSystem())
 
