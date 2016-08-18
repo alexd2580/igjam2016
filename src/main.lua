@@ -59,6 +59,11 @@ function love.load()
     resources:addImage('explosion_3', 'assets/img/fighterConfig/explosion_3.png')
     resources:addImage('explosion_4', 'assets/img/fighterConfig/explosion_4.png')
     resources:addImage('explosion_5', 'assets/img/fighterConfig/explosion_5.png')
+    resources:addImage('bg1', 'assets/img/parallax-space-background.png')
+    resources:addImage('bg2', 'assets/img/parallax-space-stars.png')
+    resources:addImage('bg3', 'assets/img/parallax-space-big-planet.png')
+    resources:addImage('bg4', 'assets/img/parallax-space-far-planets.png')
+    resources:addImage('title', 'assets/img/startScene.png')
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
 
     resources:load()
@@ -67,7 +72,7 @@ function love.load()
 
     resources.music.bg:setLooping(true)
     -- love.audio.play(resources.music.bg)
-    local game_width, game_height = 512, 448
+    game_width, game_height = 512, 448
     local window_width, window_height = love.window.getDesktopDimensions()
 
     push:setupScreen(game_width, game_height, window_width * 0.8, window_height * 0.8, {fullscreen=false, resizable=true})
