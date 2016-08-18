@@ -11,11 +11,11 @@ SwarmSystem = require("systems/SwarmSystem")
 AttackSystem = require("systems/AttackSystem")
 BulletRemoverSystem = require("systems/BulletRemoverSystem")
 DeathSystem = require("systems/DeathSystem")
-
+ParticlesSystem = require("systems/ParticlesSystem")
 BulletHitSystem = require("systems/BulletHitSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -83,6 +83,14 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     body:applyLinearImpulse(dir.x*speed, dir.y*speed)
     body:setAngle(dir:getRadian() + math.pi / 2)
 
+    local particlesystem = love.graphics.newParticleSystem(resources.images.block_particle, 32)
+    particlesystem:setParticleLifetime(2, 5) -- Particles live at least 2s and at most 5s.
+    particlesystem:setEmissionRate(50)
+    particlesystem:setSizeVariation(1)
+    particlesystem:setLinearAcceleration(-20, -20, 20, 20) -- Random movement in all directions.
+    particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
+    bullet:add(Particles(particlesystem))
+
     bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))
     bullet:add(HasEnemy(enemy_mothership))
@@ -145,6 +153,8 @@ function GameState:load()
     self.engine:addSystem(AttackSystem(self))
     self.engine:addSystem(BulletRemoverSystem(self))
     self.engine:addSystem(DeathSystem())
+    self.engine:addSystem(ParticlesSystem(), 'update')
+    self.engine:addSystem(ParticlesSystem(), 'draw')
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)

@@ -18,6 +18,10 @@ function DrawSystem:draw()
             love.graphics.circle("fill", entity_x, entity_y, physical.shape:getRadius(), 100)
         end
 
+        if entity.psystem then
+            love.graphics.draw(entity.psystem, love.graphics.getWidth() / 2, love.graphics.getHeight() / 2)
+        end
+
         --dir = Vector.from_radians(angle)
         --love.graphics.setColor(255,255,255,255)
         --love.graphics.circle("fill", entity_x+20*dir.x, entity_y+20*dir.y, 5, 100)
