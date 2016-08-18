@@ -5,6 +5,7 @@ items = {
         name = "Energy Shield",
         component = Shield,
         layer = 2,
+        level = 2,
         image = resources.images.core2
     },
     laser = {
@@ -18,6 +19,7 @@ items = {
             })
         end,
         layer = 3,
+        level = 3,
         image = resources.images.eyes3
     },
     missiles = {
@@ -31,6 +33,7 @@ items = {
             })
         end,
         layer = 3,
+        level = 4,
         image = resources.images.eyes2
     }
 }
