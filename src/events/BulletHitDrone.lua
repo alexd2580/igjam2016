@@ -1,6 +1,6 @@
 BulletHitDrone = class("BulletHitDrone")
 
-function BulletHitDrone:initialize(bullet, enemy)
+function BulletHitDrone:initialize(bullet, target)
     self.bullet = bullet
-    self.enemy = enemy
+    self.target = target
 end

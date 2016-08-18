@@ -1,6 +1,6 @@
 BulletHitMothership = class("BulletHitMothership")
 
-function BulletHitMothership:initialize(bullet, enemy)
+function BulletHitMothership:initialize(bullet, target)
     self.bullet = bullet
-    self.enemy = enemy
+    self.target = target
 end
