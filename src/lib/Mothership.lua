@@ -4,7 +4,7 @@ Mothership = class("Mothership")
 local
 
 function Mothership.load()
-    
+
 end
 
 function Mothership:initialize()

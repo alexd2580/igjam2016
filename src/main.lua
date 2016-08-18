@@ -14,7 +14,7 @@ require("components/Drawable")
 require("components/Physical")
 require("components/SwarmMember")
 require("components/HasEnemy")
-require("components/HasWeapon")
+require("components/Weapon")
 require("components/Bullet")
 require("components/Shield")
 

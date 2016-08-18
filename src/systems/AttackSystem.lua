@@ -25,20 +25,21 @@ function AttackSystem:update(dt)
 
         shoot_angle = view_dir:dot(direction)
 
-        weapon = entity:get('HasWeapon')
+        weapon = entity:get('Weapon')
         weapon.since_last_fired = weapon.since_last_fired + dt
 
         if shoot_angle > 0.95 and weapon.since_last_fired > weapon.cooldown then
 
             weapon.since_last_fired = 0
-            self.gamestate:shoot_bullet(member_vector, view_dir, 100, enemy_mothership)
+            self.gamestate:shoot_bullet(
+                member_vector, view_dir, 100, enemy_mothership, weapon.damage)
         end
 
     end
 end
 
 function AttackSystem:requires()
-    return {"HasEnemy", "Physical", "HasWeapon"}
+    return {"HasEnemy", "Physical", "Weapon"}
 end
 
 return AttackSystem

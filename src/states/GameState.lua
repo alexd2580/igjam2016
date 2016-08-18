@@ -1,13 +1,27 @@
 local GameState = class('GameState', State)
 
+-- Events
+require("events/BulletHitDrone")
+require("events/BulletHitMothership")
+require("events/EntityDamaged")
+
 -- systems
 DrawSystem = require("systems/DrawSystem")
 PlayerControlSystem = require("systems/PlayerControlSystem")
 SwarmSystem = require("systems/SwarmSystem")
 AttackSystem = require("systems/AttackSystem")
+BulletRemoverSystem = require("systems/BulletRemoverSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet'})
+BulletHitSystem = require("systems/BulletHitSystem")
+EntityDamageSystem = require("systems/EntityDamageSystem")
+
+local Health, Drawable, Physical
+    = Component.load({'Health', 'Drawable', 'Physical'})
+local HasEnemy, Weapon, SwarmMember, Bullet
+    = Component.load({'HasEnemy', 'Weapon', 'SwarmMember', 'Bullet'})
+
+print(Weapon)
+print(Health)
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -25,13 +39,14 @@ function GameState:create_mothership(x, y)
     fixture:setUserData(mothership)
     body:setMass(2)
 
+    mothership:add(Health(10000))
     mothership:add(Physical(body, fixture, shape))
     return mothership
 end
 
 function GameState:spawn_swarm(mothership, enemy_mothership)
     for i = 1, 30, 1 do
-        swarm_member = lt.Entity()
+        drone = lt.Entity()
 
         base_x, base_y = mothership:get('Physical').body:getPosition()
 
@@ -43,23 +58,24 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         local shape = love.physics.newCircleShape(10)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setRestitution(0.0)
-        fixture:setUserData(swarm_member)
+        fixture:setUserData(drone)
         body:setMass(2)
 
         for id, _ in pairs(self.enabledItems) do
-            swarm_member:add(items[id].component())
+            drone:add(items[id].component())
         end
 
-        swarm_member:add(Physical(body, fixture, shape))
-        swarm_member:add(SwarmMember(mothership))
-        swarm_member:add(HasEnemy(enemy_mothership))
-        swarm_member:add(HasWeapon())
-        swarm_member:add(Drawable({0, 0, 255, 255}))
-        self.engine:addEntity(swarm_member)
+        drone:add(Physical(body, fixture, shape))
+        drone:add(SwarmMember(mothership))
+        drone:add(HasEnemy(enemy_mothership))
+        drone:add(Weapon())
+        drone:add(Drawable({0, 0, 255, 255}))
+        drone:add(Health(100))
+        self.engine:addEntity(drone)
     end
 end
 
-function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership)
+function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     bullet = lt.Entity()
 
     local body = love.physics.newBody(self.world, start_pos.x, start_pos.y, "dynamic")
@@ -72,10 +88,11 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership)
     body:setMass(0)
     body:applyLinearImpulse(dir.x*speed, dir.y*speed)
 
-    bullet:add(Bullet())
+    bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))
     bullet:add(HasEnemy(enemy_mothership))
     bullet:add(Drawable({0, 255, 0, 255}))
+    bullet:add(Health(1))
 
     self.engine:addEntity(bullet)
 end
@@ -93,10 +110,7 @@ function bullet_hit_thing(a, b)
     return true -- a has hit something physical
 end
 
-local remove_entities_set = {}
-
 function beginContact(a, b, coll)
-
     a = a:getUserData()
     b = b:getUserData()
 
@@ -109,41 +123,24 @@ function beginContact(a, b, coll)
         return
     end
 
-    if not remove_entities_set[bullet.id] == nil then
-        return
-    end
-
     enemy_mothership = bullet:get('HasEnemy').enemy_mothership
 
+    evmgr = stack:current().eventmanager
     if object == enemy_mothership then
-        mothership_hit(enemy_mothership, bullet)
+        evmgr:fireEvent(BulletHitMothership(bullet, object))
     elseif object:has('SwarmMember') then
         -- object is a swarmmember
         object_mothership = object:get('SwarmMember').mothership
         if enemy_mothership == object_mothership then
-            drone_hit(object, bullet)
+            evmgr:fireEvent(BulletHitDrone(bullet, object))
         end
     end
-end
-
-function mothership_hit(mothership, bullet)
-    print('MotherShip hit!')
-    remove_entities_set[bullet.id] = bullet
-end
-
-function drone_hit(drone, bullet)
-    print('Enemy swarmmember hit')
-    remove_entities_set[bullet.id] = bullet
-end
-
-function endContact(a, b, coll)
-
 end
 
 function GameState:load()
     self.engine = lt.Engine()
     self.world = love.physics.newWorld(0, 0, false)
-    self.world:setCallbacks(beginContact, endContact)
+    self.world:setCallbacks(beginContact)
     self.eventmanager = lt.EventManager()
 
     -- add systems to engine
@@ -151,6 +148,19 @@ function GameState:load()
     self.engine:addSystem(PlayerControlSystem())
     self.engine:addSystem(SwarmSystem())
     self.engine:addSystem(AttackSystem(self))
+    self.engine:addSystem(BulletRemoverSystem(self))
+
+    -- add eventbased systems to eventhandler
+    self.bullet_hit_system = BulletHitSystem(self)
+    self.eventmanager:addListener("BulletHitDrone",
+        self.bullet_hit_system, self.bullet_hit_system.drone_hit)
+    self.eventmanager:addListener("BulletHitMothership",
+        self.bullet_hit_system, self.bullet_hit_system.mothership_hit)
+
+    self.entity_damage_system = EntityDamageSystem(self)
+    self.eventmanager:addListener("EntityDamaged",
+        self.entity_damage_system, self.entity_damage_system.entity_damaged)
+
 
     player = self:create_mothership(100, 100)
     enemy = self:create_mothership(650, 650)
@@ -165,11 +175,6 @@ end
 function GameState:update(dt)
     self.engine:update(dt)
     self.world:update(dt)
-    for _,entity in pairs(remove_entities_set) do
-        entity:get('Physical').body:destroy()
-        self.engine:removeEntity(entity)
-    end
-    remove_entities_set = {}
 end
 
 function GameState:draw()
