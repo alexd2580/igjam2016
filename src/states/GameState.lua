@@ -40,6 +40,7 @@ function GameState:create_mothership(mothership, x, y, enemy)
     fixture:setSensor(true)
     fixture:setRestitution(0.9)
     fixture:setUserData(mothership)
+    body:setAngle(-math.pi / 2)
     body:setMass(6)
 
     mothership:add(Health(100))
