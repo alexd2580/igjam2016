@@ -24,6 +24,12 @@ function GameOverState:update(dt)
     end
 end
 
+function GameOverState:keypressed(key)
+    if key == "space" then
+        stack:pop()
+    end
+end
+
 function GameOverState:draw()
     push:apply('start')
     suit:draw()
