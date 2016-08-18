@@ -17,6 +17,7 @@ require("components/HasEnemy")
 require("components/Weapon")
 require("components/Bullet")
 require("components/Shield")
+require("components/Health")
 
 require('items')
 

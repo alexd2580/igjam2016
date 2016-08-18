@@ -11,17 +11,13 @@ PlayerControlSystem = require("systems/PlayerControlSystem")
 SwarmSystem = require("systems/SwarmSystem")
 AttackSystem = require("systems/AttackSystem")
 BulletRemoverSystem = require("systems/BulletRemoverSystem")
+DeathSystem = require("systems/DeathSystem")
 
 BulletHitSystem = require("systems/BulletHitSystem")
 EntityDamageSystem = require("systems/EntityDamageSystem")
 
-local Health, Drawable, Physical
-    = Component.load({'Health', 'Drawable', 'Physical'})
-local HasEnemy, Weapon, SwarmMember, Bullet
-    = Component.load({'HasEnemy', 'Weapon', 'SwarmMember', 'Bullet'})
-
-print(Weapon)
-print(Health)
+local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet, Health
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet', 'Health'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -149,6 +145,7 @@ function GameState:load()
     self.engine:addSystem(SwarmSystem())
     self.engine:addSystem(AttackSystem(self))
     self.engine:addSystem(BulletRemoverSystem(self))
+    self.engine:addSystem(DeathSystem())
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)
@@ -160,7 +157,6 @@ function GameState:load()
     self.entity_damage_system = EntityDamageSystem(self)
     self.eventmanager:addListener("EntityDamaged",
         self.entity_damage_system, self.entity_damage_system.entity_damaged)
-
 
     player = self:create_mothership(100, 100)
     enemy = self:create_mothership(650, 650)
