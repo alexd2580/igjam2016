@@ -163,6 +163,10 @@ function beginContact(a, b, coll)
     enemy_mothership = bullet:get('HasEnemy').enemy_mothership
 
     local evmgr = stack:current().eventmanager
+    if evmgr == nil then
+        print('Ignoring collision')
+        return
+    end
     if object == enemy_mothership then
         evmgr:fireEvent(BulletHitMothership(bullet, object))
     elseif object:has('SwarmMember') then
