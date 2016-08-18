@@ -3,6 +3,7 @@ local GameState = class('GameState', State)
 -- Events
 require("events/BulletHitDrone")
 require("events/BulletHitMothership")
+require("events/DroneDead")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
@@ -34,12 +35,13 @@ function GameState:create_mothership(mothership, x, y, enemy)
 
     local body = love.physics.newBody(self.world, x, y, "dynamic")
     body:setLinearDamping(0.999)
-    body:setMass(2)
-    local shape = love.physics.newCircleShape(30)
+    local shape = love.physics.newCircleShape(28)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setSensor(true)
     fixture:setRestitution(0.9)
     fixture:setUserData(mothership)
+    body:setAngle(-math.pi / 2)
+    body:setMass(6)
 
     mothership:add(Health(100))
     mothership:add(Mothership())
@@ -59,7 +61,7 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         body:setAngle(0)
         body:setAngularDamping(0.8)
         body:setLinearDamping(0.6)
-        local shape = love.physics.newCircleShape(20)
+        local shape = love.physics.newCircleShape(8)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setRestitution(0.0)
         fixture:setUserData(drone)
@@ -79,43 +81,27 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
     end
 end
 
-local scheduled_explosions = {}
+function GameState:spawn_drone_explosion(event)
+    local explosion = lt.Entity()
+    local body = love.physics.newBody(self.world, event.x, event.y, "dynamic")
+    body:setAngle(event.angle)
+    body:setLinearVelocity(event.vx, event.vy)
+    body:setAngularVelocity(event.vr)
+    body:setAngularDamping(0.0)
+    body:setLinearDamping(0.0)
+    body:setMass(0)
+    local shape = love.physics.newCircleShape(0)
+    local fixture = love.physics.newFixture(body, shape, 0)
+    fixture:setSensor(true)
+    fixture:setRestitution(0.0)
+    fixture:setUserData(explosion)
 
-function GameState:schedule_explosion(target)
-    local t_body = target:get('Physical').body
-    local x, y = t_body:getPosition()
-    local angle = t_body:getAngle()
-    local vx, vy = t_body:getLinearVelocity()
-    local vr = t_body:getAngularVelocity()
+    explosion:add(Physical(body, fixture, shape))
+    explosion:add(Health(1))
+    local images = {resources.images.explosion_1, resources.images.explosion_2, resources.images.explosion_3, resources.images.explosion_4, resources.images.explosion_5}
+    explosion:add(Animation(images, 5, false))
 
-    scheduled_explosions[#scheduled_explosions+1] =
-        { x = x, y = y, angle = angle, vx = vx, vy = vy, vr = vr }
-end
-
-function GameState:spawn_explosions()
-    for i, exp_conf in pairs(scheduled_explosions) do
-        local explosion = lt.Entity()
-        local body = love.physics.newBody(self.world, exp_conf.x, exp_conf.y, "dynamic")
-        body:setAngle(exp_conf.angle)
-        body:setLinearVelocity(exp_conf.vx, exp_conf.vy)
-        body:setAngularVelocity(exp_conf.vr)
-        body:setAngularDamping(0.0)
-        body:setLinearDamping(0.0)
-        body:setMass(0)
-        local shape = love.physics.newCircleShape(0)
-        local fixture = love.physics.newFixture(body, shape, 0)
-        fixture:setSensor(true)
-        fixture:setRestitution(0.0)
-        fixture:setUserData(explosion)
-
-        explosion:add(Physical(body, fixture, shape))
-        explosion:add(Health(1))
-        local images = {resources.images.explosion_1, resources.images.explosion_2, resources.images.explosion_3, resources.images.explosion_4, resources.images.explosion_5}
-        explosion:add(Animation(images, 5))
-
-        self.engine:addEntity(explosion)
-    end
-    scheduled_explosions = {}
+    self.engine:addEntity(explosion)
 end
 
 function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
@@ -126,7 +112,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     body:setMass(0)
     body:setLinearVelocity(dir.x*speed, dir.y*speed)
     body:setAngle(dir:getRadian())
-    local shape = love.physics.newCircleShape(5)
+    local shape = love.physics.newCircleShape(3)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setSensor(true)
     fixture:setRestitution(0.0)
@@ -178,6 +164,10 @@ function beginContact(a, b, coll)
     enemy_mothership = bullet:get('HasEnemy').enemy_mothership
 
     local evmgr = stack:current().eventmanager
+    if evmgr == nil then
+        print('Ignoring collision')
+        return
+    end
     if object == enemy_mothership then
         evmgr:fireEvent(BulletHitMothership(bullet, object))
     elseif object:has('SwarmMember') then
@@ -228,6 +218,9 @@ function GameState:load()
     self.eventmanager:addListener("BulletHitMothership",
         self.bullet_hit_system, self.bullet_hit_system.mothership_hit)
 
+    -- add callback to spawn explosion
+    self.eventmanager:addListener("DroneDead", self, self.spawn_drone_explosion)
+
     player = lt.Entity()
     enemy = lt.Entity()
 
@@ -239,6 +232,19 @@ function GameState:load()
 
     self:spawn_swarm(player, enemy)
     self:spawn_swarm(enemy, player)
+end
+
+local event_queue = {}
+
+function GameState:enqueue_event(event)
+    event_queue[#event_queue+1] = event
+end
+
+function GameState:handle_events()
+    for _,event in pairs(event_queue) do
+        self.eventmanager:fireEvent(event)
+    end
+    event_queue = {}
 end
 
 function GameState:update(dt)
@@ -256,8 +262,7 @@ function GameState:update(dt)
     end
     self.engine:update(dt)
     self.world:update(dt)
-
-    self:spawn_explosions()
+    self:handle_events()
 end
 
 function GameState:draw()

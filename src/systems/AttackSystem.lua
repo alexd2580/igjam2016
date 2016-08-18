@@ -21,7 +21,7 @@ function AttackSystem:update(dt)
         direction = relative:normalize()
         dir_rad = direction:getRadian()
 
-        local accuracy = 0.8
+        local accuracy = 0.9
         local rand_off = (1-accuracy) * (2*love.math.random() - 1)
         local rand_rad = rand_off * math.pi
         local final_rad = dir_rad + rand_rad

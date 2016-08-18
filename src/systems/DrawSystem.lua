@@ -37,7 +37,10 @@ function DrawSystem:draw()
             end
 
             if debug then
-                love.graphics.circle("fill", entity_x, entity_y, physical.shape:getRadius(), 100)
+                if entity:has('Physical') then
+                    local physical = entity:get('Physical')
+                    love.graphics.circle("fill", entity_x, entity_y, physical.shape:getRadius(), 100)
+                end
             end
 
             if entity.psystem then
