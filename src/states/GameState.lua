@@ -92,7 +92,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     particlesystem:setSizeVariation(1)
     particlesystem:setLinearAcceleration(-200, -200, 200, 200) -- Random movement in all directions.
     particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
-    bullet:add(Particles(particlesystem))
+    -- bullet:add(Particles(particlesystem))
 
     bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))

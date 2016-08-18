@@ -22,8 +22,8 @@ require("components/Shield")
 require("components/Health")
 require("components/Particles")
 require("components/Mothership")
-
-require('items')
+require("components/LayeredDrawable")
+require("components/Transformable")
 
 local MenuState = require('states/MenuState')
 
@@ -38,17 +38,20 @@ function love.load()
 
     resources = Resources()
 
-    resources:addImage('fighter', 'assets/img/fighterConfig/fighter1.png')
-    resources:addImage('fighter_missile', 'assets/img/fighterConfig/missileSimple.png')
+    resources:addImage('fighter', 'assets/img/fighterConfig/fighter.png')
+    resources:addImage('fighter_missile', 'assets/img/fighterConfig/missile.png')
     resources:addImage('mask_base', 'assets/img/maskConfig/colorBlackSmall.png')
     resources:addImage('block_particle', 'assets/img/block_particle.png')
     resources:addImage('round_particle', 'assets/img/round_particle.png')
     resources:addImage('stars_bg', 'assets/img/stars_bg.png')
     resources:addImage('stars_90', 'assets/img/stars_90.png')
     resources:addImage('stars_180', 'assets/img/stars_180.png')
+    resources:addImage('shield', 'assets/img/maskConfig/core2Small.png')
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
 
     resources:load()
+
+    require('items')
 
     resources.music.bg:setLooping(true)
     -- love.audio.play(resources.music.bg)

@@ -14,9 +14,9 @@ function SwarmSystem:update()
         local direction = relative:normalize()
 
         local force_factor = 2000
-        if relative:length() < 50 then
+        if relative:length() < 30 then
             body:applyForce(direction.x * -force_factor, direction.y * -force_factor)
-        elseif relative:length() > 150 then
+        elseif relative:length() > 100 then
             body:applyForce(direction.x * force_factor, direction.y * force_factor)
         end
 
