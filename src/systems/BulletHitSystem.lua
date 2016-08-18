@@ -10,7 +10,7 @@ function BulletHitSystem:drone_hit(event)
         event.target:get('Health').points - event.bullet:get('Bullet').damage
 
     if event.target:get('Health').points <= 0 then
-        self.gamestate:schedule_explosion(event.target)
+        self.gamestate:enqueue_event(DroneDead(event.target))
     end
 end
 
@@ -20,7 +20,7 @@ function BulletHitSystem:mothership_hit(event)
         event.target:get('Health').points - event.bullet:get('Bullet').damage
 
     if event.target:get('Health').points <= 0 then
-        self.gamestate:schedule_explosion(event.target)
+        --self.gamestate:schedule_explosion(event.target)
     end
 end
 
