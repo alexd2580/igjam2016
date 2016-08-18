@@ -23,7 +23,8 @@ LaserSystem = require('systems/LaserSystem')
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse'})
 
-function GameState:initialize(enabledItems)
+function GameState:initialize(level, enabledItems)
+    self.level = level
     self.enabledItems = enabledItems
 end
 

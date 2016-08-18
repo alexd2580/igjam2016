@@ -4,6 +4,10 @@ local GameState = require('states/GameState')
 
 local suit = require('lib/suit')
 
+function CustomizeState:initialize(level)
+    self:loadLevel(level)
+end
+
 function CustomizeState:load()
     local Transformable, LayeredDrawable = Component.load({"Transformable", "LayeredDrawable"})
 
@@ -59,6 +63,7 @@ function CustomizeState:draw()
     push:apply("start")
     suit.draw()
     self.engine:draw()
+    love.graphics.print("Level " .. self.level, 20, 20, 0, 4)
     push:apply("end")
 end
 
@@ -71,7 +76,26 @@ function CustomizeState:keypressed(key)
         stack:push(GameState(self.enabledItems))
         return
     end
+    if key == "[" then
+        self:loadLevel(self.level - 1)
+    end
+    if key == "]" then
+        self:loadLevel(self.level + 1)
+    end
+
     suit.keypressed(key)
+end
+
+function CustomizeState:loadLevel(level)
+    if level < 1 then
+        level = 1
+    end
+    if level > 10 then
+        level = 10
+    end
+
+    self.level = level
+    print("Loading level " .. self.level)
 end
 
 return CustomizeState
