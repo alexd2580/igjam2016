@@ -1,3 +1,4 @@
+push = require('lib/push/push')
 lt = require('lib/lovetoys/lovetoys')
 lt.initialize({
     globals = true,
@@ -25,7 +26,11 @@ require('items')
 local MenuState = require('states/MenuState')
 
 function love.load()
-    love.window.setMode(1000, 768, {fullscreen=false, vsync=true, resizable=false})
+    -- love.window.setMode(1366, 768, {fullscreen=false, vsync=true, resizable=true})
+    love.graphics.setDefaultFilter('nearest', 'nearest', 0)
+    glyph_string = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=[]\\,./;')!@#$%^&*(+{}!<>?:\""
+    font = love.graphics.newImageFont('assets/img/font.png', glyph_string, 2)
+    love.graphics.setFont(font)
     require('constants')
 
     stack = Stack()
@@ -42,6 +47,10 @@ function love.load()
 
     resources.music.bg:setLooping(true)
     -- love.audio.play(resources.music.bg)
+    local game_width, game_height = 512, 448
+    local window_width, window_height = love.window.getDesktopDimensions()
+
+    push:setupScreen(game_width, game_height, window_width * 0.8, window_height * 0.8, {fullscreen=false, resizable=true})
 end
 
 function love.update(dt)
@@ -64,5 +73,11 @@ function love.textinput(text)
 end
 
 function love.draw()
+    push:apply('start')
     stack:current():draw()
+    push:apply('end')
+end
+
+function love.resize(w, h)
+  push:resize(w, h)
 end
