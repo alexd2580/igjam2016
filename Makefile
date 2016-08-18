@@ -3,29 +3,29 @@
 default: build run
 
 buildclean:
-	@[[ ! -e igjam16.love ]] || rm igjam16.love
+	@[[ ! -e igjam2016.love ]] || rm igjam2016.love
 
 clean:
-	@[[ ! -e igjam16.love ]] || rm igjam16.love
+	@[[ ! -e igjam2016.love ]] || rm igjam2016.love
 	@[[ ! -e pkg ]] || rm -r pkg
 	@[[ ! -e lib ]] || rm -r lib
 	@[[ ! -e temp ]] || rm -r temp
 
 build: buildclean
-	@zip -q -r -0 igjam16.love assets/*
-	@cd src/ && zip -q -r ../igjam16.love *
+	@zip -q -r -0 igjam2016.love assets/*
+	@cd src/ && zip -q -r ../igjam2016.love *
 
 build-fast:
-	@zip -q -r -0 igjam16.love assets/*
+	@zip -q -r -0 igjam2016.love assets/*
 	@./script/fast.sh
-	@cd temp/ && zip -q -r ../igjam16.love *
+	@cd temp/ && zip -q -r ../igjam2016.love *
 	@rm -rf temp
 
 fast: build-fast
-	@love igjam16.love
+	@love igjam2016.love
 
 run:
-	@love igjam16.love
+	@love igjam2016.love
 
 setup:
 	git submodule update --init --recursive

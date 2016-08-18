@@ -1,1 +1,3 @@
 *.love
+pkg/
+lib/
