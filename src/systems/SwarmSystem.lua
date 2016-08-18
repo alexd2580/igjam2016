@@ -25,6 +25,11 @@ function SwarmSystem:update()
         body:applyForce(direction_rotated.x * rotation_force_factor,
                         direction_rotated.y * rotation_force_factor,
                         member_x, member_y)
+
+        x, y = body:getLinearVelocity()
+        vel = Vector(x, y)
+        rad = vel:getRadian()
+        body:setAngle(rad)
     end
 end
 
