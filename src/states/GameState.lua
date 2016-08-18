@@ -3,7 +3,6 @@ local GameState = class('GameState', State)
 -- Events
 require("events/BulletHitDrone")
 require("events/BulletHitMothership")
-require("events/EntityDamaged")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
@@ -14,7 +13,6 @@ BulletRemoverSystem = require("systems/BulletRemoverSystem")
 DeathSystem = require("systems/DeathSystem")
 
 BulletHitSystem = require("systems/BulletHitSystem")
-EntityDamageSystem = require("systems/EntityDamageSystem")
 
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health'})
@@ -153,10 +151,6 @@ function GameState:load()
         self.bullet_hit_system, self.bullet_hit_system.drone_hit)
     self.eventmanager:addListener("BulletHitMothership",
         self.bullet_hit_system, self.bullet_hit_system.mothership_hit)
-
-    self.entity_damage_system = EntityDamageSystem(self)
-    self.eventmanager:addListener("EntityDamaged",
-        self.entity_damage_system, self.entity_damage_system.entity_damaged)
 
     player = self:create_mothership(100, 100)
     enemy = self:create_mothership(650, 650)
