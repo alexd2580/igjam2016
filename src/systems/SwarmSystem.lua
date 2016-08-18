@@ -20,7 +20,7 @@ function SwarmSystem:update()
             body:applyForce(direction.x * force_factor, direction.y * force_factor)
         end
 
-        local rotation_force_factor = 250
+        local rotation_force_factor = 200
         local direction_rotated = direction:rotate(math.rad(90))
         body:applyForce(direction_rotated.x * rotation_force_factor,
                         direction_rotated.y * rotation_force_factor,

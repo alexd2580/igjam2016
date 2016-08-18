@@ -49,7 +49,10 @@ function CustomizeState:textinput(t)
 end
 
 function CustomizeState:keypressed(key)
-    stack:push(GameState(self.enabledItems))
+    if key == "space" then
+        stack:push(GameState(self.enabledItems))
+        return
+    end
     suit.keypressed(key)
 end
 

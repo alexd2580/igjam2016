@@ -15,6 +15,7 @@ ParticlesSystem = require("systems/ParticlesSystem")
 BulletHitSystem = require("systems/BulletHitSystem")
 MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
+GameOverSystem = require("systems/GameOverSystem")
 
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation'})
@@ -34,7 +35,7 @@ function GameState:create_mothership(mothership, x, y, enemy)
     fixture:setUserData(mothership)
     body:setMass(2)
 
-    mothership:add(Health(10000))
+    mothership:add(Health(30))
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
@@ -52,11 +53,11 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         body:setAngle(0)
         body:setAngularDamping(0.8)
         body:setLinearDamping(0.6)
+        body:setMass(2)
         local shape = love.physics.newCircleShape(20)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setRestitution(0.0)
         fixture:setUserData(drone)
-        body:setMass(2)
 
         for id, _ in pairs(self.enabledItems) do
             drone:add(items[id].component())
@@ -79,9 +80,10 @@ function GameState:schedule_explosion(target)
     local x, y = t_body:getPosition()
     local angle = t_body:getAngle()
     local vx, vy = t_body:getLinearVelocity()
+    local vr = t_body:getAngularVelocity()
 
     scheduled_explosions[#scheduled_explosions+1] =
-        { x = x, y = y, angle = angle, vx = vx, vy = vy }
+        { x = x, y = y, angle = angle, vx = vx, vy = vy, vr = vr }
 end
 
 function GameState:spawn_explosions()
@@ -90,6 +92,7 @@ function GameState:spawn_explosions()
         local body = love.physics.newBody(self.world, exp_conf.x, exp_conf.y, "dynamic")
         body:setAngle(exp_conf.angle)
         body:setLinearVelocity(exp_conf.vx, exp_conf.vy)
+        body:setAngularVelocity(exp_conf.vr)
         body:setAngularDamping(0.0)
         body:setLinearDamping(0.0)
         body:setMass(0)
@@ -127,7 +130,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     particlesystem:setParticleLifetime(2, 50) -- Particles live at least 2s and at most 5s.
     particlesystem:setEmissionRate(50)
     particlesystem:setSizeVariation(1)
-    particlesystem:setLinearAcceleration(-200, -200, 200, 200) -- Random movement in all directions.
+    particlesystem:setLinearAcceleration(-20, -20, 20, 20) -- Random movement in all directions.
     particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
     bullet:add(Particles(particlesystem))
 
@@ -168,7 +171,7 @@ function beginContact(a, b, coll)
 
     enemy_mothership = bullet:get('HasEnemy').enemy_mothership
 
-    evmgr = stack:current().eventmanager
+    local evmgr = stack:current().eventmanager
     if object == enemy_mothership then
         evmgr:fireEvent(BulletHitMothership(bullet, object))
     elseif object:has('SwarmMember') then
@@ -197,17 +200,20 @@ function GameState:load()
     self.bg_pos80 = 0
     self.bg_pos60 = 0
 
+    local particlesSystem = ParticlesSystem()
+
     -- add systems to engine
     self.engine:addSystem(DrawSystem())
     self.engine:addSystem(PlayerControlSystem())
     self.engine:addSystem(SwarmSystem())
     self.engine:addSystem(AttackSystem(self))
     self.engine:addSystem(BulletRemoverSystem(self))
-    self.engine:addSystem(DeathSystem())
-    self.engine:addSystem(ParticlesSystem(), 'update')
-    self.engine:addSystem(ParticlesSystem(), 'draw')
+    self.engine:addSystem(particlesSystem, 'update')
+    self.engine:addSystem(particlesSystem, 'draw')
     self.engine:addSystem(MothershipSystem())
     self.engine:addSystem(AnimatedDrawSystem())
+    self.engine:addSystem(DeathSystem())
+    self.engine:addSystem(GameOverSystem())
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)
