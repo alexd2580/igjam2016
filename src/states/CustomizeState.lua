@@ -9,6 +9,7 @@ function CustomizeState:load()
 end
 
 function CustomizeState:update(dt)
+    suit.updateMouse(push:toGame(love.mouse.getPosition()))
     suit.layout:reset(100, 100)
 
     for id, item in pairs(items) do
@@ -28,14 +29,19 @@ function CustomizeState:update(dt)
         end
     end
 
-    suit.layout:reset(constants.screenWidth - 240, constants.screenHeight - 80, 10, 10)
+    suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
     if suit.Button("Into Battle!", suit.layout:row(200, 40)).hit then
         stack:push(GameState(self.enabledItems))
+    end
+    if suit.Button("Back", suit.layout:row(200, 40)).hit then
+        stack:pop()
     end
 end
 
 function CustomizeState:draw()
+    push:apply("start")
     suit.draw()
+    push:apply("end")
 end
 
 function CustomizeState:textinput(t)

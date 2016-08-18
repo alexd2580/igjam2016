@@ -10,7 +10,7 @@ function DrawSystem:draw()
         love.graphics.draw(image,
                            entity_x,
                            entity_y,
-                           angle, 1, 1,
+                           angle + math.pi / 2, 1, 1,
                            image:getWidth() / 2,
                            image:getHeight() / 2)
 

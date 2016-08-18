@@ -21,18 +21,17 @@ require("components/Bullet")
 require("components/Shield")
 require("components/Health")
 require("components/Particles")
+require("components/Mothership")
 
 require('items')
 
 local MenuState = require('states/MenuState')
 
 function love.load()
-    -- love.window.setMode(1366, 768, {fullscreen=false, vsync=true, resizable=true})
     love.graphics.setDefaultFilter('nearest', 'nearest', 0)
     glyph_string = " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=[]\\,./;')!@#$%^&*(+{}!<>?:\""
     font = love.graphics.newImageFont('assets/img/font.png', glyph_string, 2)
     love.graphics.setFont(font)
-    require('constants')
 
     stack = Stack()
     stack:push(MenuState())
