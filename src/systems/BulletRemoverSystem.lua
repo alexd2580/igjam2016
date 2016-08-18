@@ -21,7 +21,7 @@ function BulletRemoverSystem:update(dt)
 end
 
 function BulletRemoverSystem:requires()
-    return {"Bullets"} --implicitly contain Physical
+    return {"Bullet"} --implicitly contain Physical
 end
 
 return BulletRemoverSystem
