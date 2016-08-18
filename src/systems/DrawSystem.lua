@@ -14,6 +14,10 @@ function DrawSystem:draw()
             end
 
             local entity_x, entity_y, angle, sx, sy
+            if entity:has('Pulse') then
+                local pulse = entity:get('Pulse')
+                print(pulse)
+            end
             if entity:has('Physical') then
                 local physical = entity:get('Physical')
                 angle = physical.body:getAngle()
