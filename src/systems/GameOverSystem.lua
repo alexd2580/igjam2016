@@ -8,6 +8,7 @@ function GameOverSystem:update(dt)
         stack:push(GameOverState(false))
     elseif enemy:get("Health").points <= 0 then
         stack:pop()
+        stack:current():loadLevel(stack:current().level + 1)
         stack:push(GameOverState(true))
     end
 end
