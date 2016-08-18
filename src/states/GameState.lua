@@ -18,8 +18,8 @@ MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -47,6 +47,7 @@ function GameState:create_mothership(mothership, x, y, enemy)
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
+    mothership:add(HitIndicator())
     return mothership
 end
 
@@ -77,6 +78,7 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         drone:add(Weapon())
         drone:add(Drawable(resources.images.fighter))
         drone:add(Health(100))
+        drone:add(HitIndicator())
         self.engine:addEntity(drone)
     end
 end

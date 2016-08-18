@@ -24,6 +24,20 @@ function DrawSystem:draw()
                 sx, sy = entity:get('Transformable').scale:unpack()
             end
 
+            local flash_white = false
+            if entity:has('HitIndicator') then
+                hi =  entity:get('HitIndicator')
+                if hi.hit then
+                    flash_white = true
+                    hi.hit = false
+                end
+            end
+
+            if flash_white then
+                love.graphics.setColorMode(ColorMode.combine)
+                love.graphics.setColor(255,255,255,255)
+            end
+
             for i = 1, maxIndex, 1 do
                 if images[i] then
                     love.graphics.draw(images[i],
@@ -34,6 +48,10 @@ function DrawSystem:draw()
                                        images[i]:getWidth() / 2,
                                        images[i]:getHeight() / 2)
                end
+            end
+
+            if flash_white then
+                love.graphics.setColorMode(ColorMode.replace)
             end
 
             if debug then

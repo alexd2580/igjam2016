@@ -25,6 +25,7 @@ require("components/Mothership")
 require("components/LayeredDrawable")
 require("components/Transformable")
 require("components/Animation")
+require("components/HitIndicator")
 
 local MenuState = require('states/MenuState')
 
