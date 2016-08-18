@@ -47,6 +47,12 @@ function love.load()
     resources:addImage('stars_bg', 'assets/img/stars_bg.png')
     resources:addImage('stars_90', 'assets/img/stars_90.png')
     resources:addImage('stars_180', 'assets/img/stars_180.png')
+
+    resources:addImage('explosion_1', 'assets/img/fighterConfig/explosion_1.png')
+    resources:addImage('explosion_2', 'assets/img/fighterConfig/explosion_2.png')
+    resources:addImage('explosion_3', 'assets/img/fighterConfig/explosion_3.png')
+    resources:addImage('explosion_4', 'assets/img/fighterConfig/explosion_4.png')
+    resources:addImage('explosion_5', 'assets/img/fighterConfig/explosion_5.png')
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
 
     resources:load()

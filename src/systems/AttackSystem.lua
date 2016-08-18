@@ -19,6 +19,12 @@ function AttackSystem:update(dt)
         member_vector = Vector(member_x, member_y)
         relative = enemy_vector - member_vector
         direction = relative:normalize()
+        dir_rad = direction:getRadian()
+
+        local accuracy = 0.8
+        local rand_off = (1-accuracy) * (2*love.math.random() - 1)
+        local rand_rad = rand_off * math.pi
+        local final_rad = dir_rad + rand_rad
 
         rad_angle = body:getAngle()
         view_dir = Vector.from_radians(rad_angle)
@@ -32,7 +38,7 @@ function AttackSystem:update(dt)
 
             weapon.since_last_fired = 0
             self.gamestate:shoot_bullet(
-                member_vector, view_dir, 200, enemy_mothership, weapon.damage)
+                member_vector, Vector.from_radians(final_rad), 200, enemy_mothership, weapon.damage)
         end
 
     end

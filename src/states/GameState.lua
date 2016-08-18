@@ -28,12 +28,12 @@ function GameState:create_mothership(mothership, x, y, enemy)
     mothership:add(Drawable(resources.images.mask_base))
     local body = love.physics.newBody(self.world, x, y, "dynamic")
     body:setLinearDamping(0.999)
+    body:setMass(2)
     local shape = love.physics.newCircleShape(30)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setSensor(true)
     fixture:setRestitution(0.9)
     fixture:setUserData(mothership)
-    body:setMass(2)
 
     mothership:add(Health(30))
     mothership:add(Mothership())
@@ -53,11 +53,11 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         body:setAngle(0)
         body:setAngularDamping(0.8)
         body:setLinearDamping(0.6)
-        body:setMass(2)
         local shape = love.physics.newCircleShape(20)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setRestitution(0.0)
         fixture:setUserData(drone)
+        body:setMass(2)
 
         for id, _ in pairs(self.enabledItems) do
             drone:add(items[id].component())
@@ -104,8 +104,8 @@ function GameState:spawn_explosions()
 
         explosion:add(Physical(body, fixture, shape))
         explosion:add(Health(1))
-        local images = {resources.images.fighter_missile, resources.images.fighter, resources.images.fighter_missile, resources.images.fighter, resources.images.fighter_missile, resources.images.fighter}
-        explosion:add(Animation(images, 10))
+        local images = {resources.images.explosion_1, resources.images.explosion_2, resources.images.explosion_3, resources.images.explosion_4, resources.images.explosion_5}
+        explosion:add(Animation(images, 5))
 
         self.engine:addEntity(explosion)
     end
