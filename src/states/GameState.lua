@@ -16,8 +16,8 @@ DeathSystem = require("systems/DeathSystem")
 BulletHitSystem = require("systems/BulletHitSystem")
 EntityDamageSystem = require("systems/EntityDamageSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, HasWeapon, Bullet, Health
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'HasWeapon', 'Bullet', 'Health'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems

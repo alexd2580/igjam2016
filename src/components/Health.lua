@@ -1,1 +1,5 @@
-local Health = Component.create("Health", {"points"}, {points = 100})
+local Health = Component.create("Health")
+
+function Health:initialize(points)
+    self.points = 100
+end
