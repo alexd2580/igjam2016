@@ -118,12 +118,11 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     fixture:setUserData(bullet)
 
     local particlesystem = love.graphics.newParticleSystem(resources.images.block_particle, 32)
-    particlesystem:setParticleLifetime(2, 50) -- Particles live at least 2s and at most 5s.
-    particlesystem:setEmissionRate(50)
-    particlesystem:setSizeVariation(1)
-    particlesystem:setLinearAcceleration(-20, -20, 20, 20) -- Random movement in all directions.
-    particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
-    -- bullet:add(Particles(particlesystem))
+    particlesystem:setParticleLifetime(0.2)
+    particlesystem:setEmissionRate(64)
+    particlesystem:setSizes(0.5, 0.1)
+    particlesystem:setColors(255, 0, 10, 255, 255, 10, 10, 100)
+    bullet:add(Particles(particlesystem))
 
     bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))
