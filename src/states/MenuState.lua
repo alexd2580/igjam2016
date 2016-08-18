@@ -22,6 +22,9 @@ function MenuState:initialize()
     self.bg4_ypos = 40
 end
 
+function MenuState:load()
+end
+
 function MenuState:update(dt)
     suit.updateMouse(push:toGame(love.mouse.getPosition()))
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
