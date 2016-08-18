@@ -48,6 +48,8 @@ function AttackSystem:update(dt)
                 stack:current().engine:addEntity(beam)
                 local health = enemy_mothership:get("Health")
                 health.points = health.points - weapon.damage
+                resources.sounds.laserShot:setVolume(0.05)
+                resources.sounds.laserShot:clone():play()
             elseif weapon.type == 'missile' then
                 self.gamestate:shoot_bullet(
                     member_vector, Vector.from_radians(final_rad), 200, enemy_mothership, weapon.damage)
