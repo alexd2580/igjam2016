@@ -65,6 +65,7 @@ function love.load()
     resources:addImage('bg4', 'assets/img/parallax-space-far-planets.png')
     resources:addImage('title', 'assets/img/startScene.png')
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
+    resources:addMusic('laserShot', 'assets/music/laserShot.ogg')
 
     resources:load()
 
