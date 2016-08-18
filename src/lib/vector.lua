@@ -20,6 +20,10 @@ function Vector:set(x, y)
     end
 end
 
+function Vector:neg()
+    return Vector(-self.x, -self.y)
+end
+
 function Vector:clone()
     return Vector(self.x,self.y)
 end
@@ -111,6 +115,10 @@ function Vector.from_radians(rad)
     local x = math.cos(rad)
     local y = math.sin(rad)
     return Vector(x, y)
+end
+
+function Vector:null()
+    return x == 0 or y == 0
 end
 
 function Vector:unpack()
