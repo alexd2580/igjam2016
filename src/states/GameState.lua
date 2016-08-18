@@ -84,10 +84,10 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     body:setAngle(dir:getRadian() + math.pi / 2)
 
     local particlesystem = love.graphics.newParticleSystem(resources.images.block_particle, 32)
-    particlesystem:setParticleLifetime(2, 5) -- Particles live at least 2s and at most 5s.
+    particlesystem:setParticleLifetime(2, 50) -- Particles live at least 2s and at most 5s.
     particlesystem:setEmissionRate(50)
     particlesystem:setSizeVariation(1)
-    particlesystem:setLinearAcceleration(-20, -20, 20, 20) -- Random movement in all directions.
+    particlesystem:setLinearAcceleration(-200, -200, 200, 200) -- Random movement in all directions.
     particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
     bullet:add(Particles(particlesystem))
 
@@ -146,6 +146,10 @@ function GameState:load()
     self.world:setCallbacks(beginContact)
     self.eventmanager = lt.EventManager()
 
+    self.bg_pos100 = 0
+    self.bg_pos80 = 0
+    self.bg_pos60 = 0
+
     -- add systems to engine
     self.engine:addSystem(DrawSystem())
     self.engine:addSystem(PlayerControlSystem())
@@ -174,11 +178,33 @@ function GameState:load()
 end
 
 function GameState:update(dt)
+    self.bg_pos100 = self.bg_pos100 - 1
+    if self.bg_pos100 <= -resources.images.stars_bg:getWidth() then
+        self.bg_pos100 = 0
+    end
+    self.bg_pos80 = self.bg_pos80 - 2
+    if self.bg_pos80 <= -resources.images.stars_90:getWidth() then
+        self.bg_pos80 = 0
+    end
+    self.bg_pos60 = self.bg_pos60 - 3
+    if self.bg_pos60 <= -resources.images.stars_180:getWidth() then
+        self.bg_pos60 = 0
+    end
     self.engine:update(dt)
     self.world:update(dt)
 end
 
 function GameState:draw()
+    love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
+    love.graphics.setColor(255, 255, 255, 204)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
+    love.graphics.setColor(255, 255, 255, 153)
+    love.graphics.draw(resources.images.stars_180, self.bg_pos60, 0)
+    love.graphics.draw(resources.images.stars_180, self.bg_pos60 + resources.images.stars_180:getWidth(), 0)
+    love.graphics.setColor(255, 255, 255, 255)
     self.engine:draw()
 end
 
