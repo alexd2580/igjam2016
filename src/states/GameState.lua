@@ -42,7 +42,7 @@ function GameState:create_mothership(mothership, x, y, enemy)
     fixture:setRestitution(0.9)
     fixture:setUserData(mothership)
 
-    mothership:add(Health(30))
+    mothership:add(Health(100))
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
@@ -224,7 +224,7 @@ function GameState:load()
     enemy = lt.Entity()
 
     player = self:create_mothership(player, 100, 100, enemy)
-    enemy = self:create_mothership(enemy, 650, 650, player)
+    enemy = self:create_mothership(enemy, 430, 380, player)
 
     self.engine:addEntity(player)
     self.engine:addEntity(enemy)
