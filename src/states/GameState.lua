@@ -18,15 +18,21 @@ MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
 end
 
 function GameState:create_mothership(mothership, x, y, enemy)
-    mothership:add(Drawable(resources.images.mask_base))
+    local drawable = LayeredDrawable()
+    drawable:setLayer(1, resources.images.mask_base)
+    for layer, id in pairs(self.enabledItems) do
+        drawable:setLayer(layer, items[id].image)
+    end
+    mothership:add(drawable)
+
     local body = love.physics.newBody(self.world, x, y, "dynamic")
     body:setLinearDamping(0.999)
     body:setMass(2)
@@ -60,7 +66,7 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         fixture:setUserData(drone)
         body:setMass(2)
 
-        for id, _ in pairs(self.enabledItems) do
+        for layer, id in pairs(self.enabledItems) do
             drone:add(items[id].component())
         end
 
@@ -117,7 +123,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     particlesystem:setSizeVariation(1)
     particlesystem:setLinearAcceleration(-20, -20, 20, 20) -- Random movement in all directions.
     particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
-    bullet:add(Particles(particlesystem))
+    -- bullet:add(Particles(particlesystem))
 
     bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))
