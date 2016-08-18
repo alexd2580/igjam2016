@@ -17,7 +17,7 @@ mkdir -p $LIBDIR
 
 if [ $TARGET = "windows" ]; then
     if [ `ls -A $LIBDIR | wc -w` == 0 ]; then
-        wget -q https://bitbucket.org/rude/love/downloads/love-0.9.1-win64.zip -O temp/windows.zip
+        wget -q https://bitbucket.org/rude/love/downloads/love-0.10.1-win64.zip -O temp/windows.zip
         unzip -q $ROOTDIR/temp/$TARGET -d $LIBDIR/
         SUBDIR=$(ls $LIBDIR)
         mv $LIBDIR/$SUBDIR/* $LIBDIR/
@@ -29,7 +29,7 @@ if [ $TARGET = "windows" ]; then
     fi
 elif [ $TARGET = "osx" ]; then
     if [ `ls -A $LIBDIR | wc -w` == 0 ]; then
-        wget -q https://bitbucket.org/rude/love/downloads/love-0.9.1-macosx-x64.zip -O temp/osx.zip
+        wget -q https://bitbucket.org/rude/love/downloads/love-0.10.1-macosx-x64.zip -O temp/osx.zip
         unzip -q $ROOTDIR/temp/$TARGET -d $LIBDIR/
         rm -r $LIBDIR/__MACOSX
     else
