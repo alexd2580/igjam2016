@@ -13,16 +13,16 @@ BulletRemoverSystem = require("systems/BulletRemoverSystem")
 DeathSystem = require("systems/DeathSystem")
 ParticlesSystem = require("systems/ParticlesSystem")
 BulletHitSystem = require("systems/BulletHitSystem")
+MothershipSystem = require("systems/MothershipSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
 end
 
-function GameState:create_mothership(x, y)
-    local mothership = lt.Entity()
+function GameState:create_mothership(mothership, x, y, enemy)
     mothership:add(Drawable(resources.images.mask_base))
     local body = love.physics.newBody(self.world, x, y, "dynamic")
     body:setLinearDamping(0.999)
@@ -34,6 +34,8 @@ function GameState:create_mothership(x, y)
     body:setMass(2)
 
     mothership:add(Health(10000))
+    mothership:add(Mothership())
+    mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
     return mothership
 end
@@ -81,7 +83,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     fixture:setUserData(bullet)
     body:setMass(0)
     body:applyLinearImpulse(dir.x*speed, dir.y*speed)
-    body:setAngle(dir:getRadian() + math.pi / 2)
+    body:setAngle(dir:getRadian())
 
     local particlesystem = love.graphics.newParticleSystem(resources.images.block_particle, 32)
     particlesystem:setParticleLifetime(2, 5) -- Particles live at least 2s and at most 5s.
@@ -155,6 +157,7 @@ function GameState:load()
     self.engine:addSystem(DeathSystem())
     self.engine:addSystem(ParticlesSystem(), 'update')
     self.engine:addSystem(ParticlesSystem(), 'draw')
+    self.engine:addSystem(MothershipSystem())
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)
@@ -163,8 +166,11 @@ function GameState:load()
     self.eventmanager:addListener("BulletHitMothership",
         self.bullet_hit_system, self.bullet_hit_system.mothership_hit)
 
-    player = self:create_mothership(100, 100)
-    enemy = self:create_mothership(650, 650)
+    player = lt.Entity()
+    enemy = lt.Entity()
+
+    player = self:create_mothership(player, 100, 100, enemy)
+    enemy = self:create_mothership(enemy, 650, 650, player)
 
     self.engine:addEntity(player)
     self.engine:addEntity(enemy)
