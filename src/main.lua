@@ -4,7 +4,7 @@ lt.initialize({
     globals = true,
     debug = true
 })
-debug = true
+debug = false
 
 State = require('lib/State')
 Stack = require('lib/StackHelper')
