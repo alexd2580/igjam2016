@@ -152,6 +152,8 @@ function GameState:load()
     self.bg_pos80 = 0
     self.bg_pos60 = 0
 
+    local particlesSystem = ParticlesSystem()
+
     -- add systems to engine
     self.engine:addSystem(DrawSystem())
     self.engine:addSystem(PlayerControlSystem())
@@ -159,8 +161,8 @@ function GameState:load()
     self.engine:addSystem(AttackSystem(self))
     self.engine:addSystem(BulletRemoverSystem(self))
     self.engine:addSystem(DeathSystem())
-    self.engine:addSystem(ParticlesSystem(), 'update')
-    self.engine:addSystem(ParticlesSystem(), 'draw')
+    self.engine:addSystem(particlesSystem, 'update')
+    self.engine:addSystem(particlesSystem, 'draw')
     self.engine:addSystem(MothershipSystem())
 
     -- add eventbased systems to eventhandler
