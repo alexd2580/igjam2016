@@ -17,25 +17,31 @@ MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
 end
 
 function GameState:create_mothership(mothership, x, y, enemy)
-    mothership:add(Drawable(resources.images.mask_base))
+    local drawable = LayeredDrawable()
+    drawable:setLayer(1, resources.images.mask_base)
+    for layer, id in pairs(self.enabledItems) do
+        drawable:setLayer(layer, items[id].image)
+    end
+    mothership:add(drawable)
+
     local body = love.physics.newBody(self.world, x, y, "dynamic")
     body:setLinearDamping(0.999)
+    body:setMass(2)
     local shape = love.physics.newCircleShape(30)
     local fixture = love.physics.newFixture(body, shape, 1)
     fixture:setSensor(true)
     fixture:setRestitution(0.9)
     fixture:setUserData(mothership)
-    body:setMass(2)
 
-    mothership:add(Health(30))
+    mothership:add(Health(100))
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
@@ -53,13 +59,13 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         body:setAngle(0)
         body:setAngularDamping(0.8)
         body:setLinearDamping(0.6)
-        body:setMass(2)
         local shape = love.physics.newCircleShape(20)
         local fixture = love.physics.newFixture(body, shape, 1)
         fixture:setRestitution(0.0)
         fixture:setUserData(drone)
+        body:setMass(2)
 
-        for id, _ in pairs(self.enabledItems) do
+        for layer, id in pairs(self.enabledItems) do
             drone:add(items[id].component())
         end
 
@@ -104,8 +110,8 @@ function GameState:spawn_explosions()
 
         explosion:add(Physical(body, fixture, shape))
         explosion:add(Health(1))
-        local images = {resources.images.fighter_missile, resources.images.fighter, resources.images.fighter_missile, resources.images.fighter, resources.images.fighter_missile, resources.images.fighter}
-        explosion:add(Animation(images, 10))
+        local images = {resources.images.explosion_1, resources.images.explosion_2, resources.images.explosion_3, resources.images.explosion_4, resources.images.explosion_5}
+        explosion:add(Animation(images, 5))
 
         self.engine:addEntity(explosion)
     end
@@ -132,7 +138,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     particlesystem:setSizeVariation(1)
     particlesystem:setLinearAcceleration(-20, -20, 20, 20) -- Random movement in all directions.
     particlesystem:setColors(255, 255, 255, 255, 255, 255, 255, 0) -- Fade to transparency.
-    bullet:add(Particles(particlesystem))
+    -- bullet:add(Particles(particlesystem))
 
     bullet:add(Bullet(damage))
     bullet:add(Physical(body, fixture, shape))
@@ -226,7 +232,7 @@ function GameState:load()
     enemy = lt.Entity()
 
     player = self:create_mothership(player, 100, 100, enemy)
-    enemy = self:create_mothership(enemy, 650, 650, player)
+    enemy = self:create_mothership(enemy, 430, 380, player)
 
     self.engine:addEntity(player)
     self.engine:addEntity(enemy)

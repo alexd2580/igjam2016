@@ -113,6 +113,10 @@ function Vector.from_radians(rad)
     return Vector(x, y)
 end
 
+function Vector:unpack()
+    return self.x, self.y
+end
+
 Vector.__add = Vector.add
 Vector.__sub = Vector.subtract
 Vector.__mul = Vector.multiply

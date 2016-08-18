@@ -5,7 +5,23 @@ local GameState = require('states/GameState')
 local suit = require('lib/suit')
 
 function CustomizeState:load()
+    local Transformable, LayeredDrawable = Component.load({"Transformable", "LayeredDrawable"})
+
+    self.engine = Engine()
+
+    self.engine:addSystem(require('systems/DrawSystem')())
+
     self.enabledItems = {}
+
+    self.mask = Entity()
+    self.layers = LayeredDrawable()
+
+    self.mask:add(Transformable(Vector(400, 200), Vector(2, 2)))
+    self.mask:add(self.layers)
+
+    self.layers:setLayer(1, resources.images.mask_base)
+
+    self.engine:addEntity(self.mask)
 end
 
 function CustomizeState:update(dt)
@@ -14,20 +30,19 @@ function CustomizeState:update(dt)
 
     for id, item in pairs(items) do
         suit.Label(item.name, {align = "center", id = ("enableLabel_" .. id)}, suit.layout:row(100, 50))
-        local text = self.enabledItems[id] and "Disable" or "Enable"
+        local text = (self.enabledItems[item.layer] == id) and "Disable" or "Enable"
         if suit.Button(text, {id = ("enableButton_" .. id) }, suit.layout:row(100, 30)).hit then
-            self.enabledItems[id] = not self.enabledItems[id]
+            if self.enabledItems[item.layer] == id then
+                self.enabledItems[item.layer] = nil
+                self.layers:setLayer(item.layer, nil)
+            else
+                self.enabledItems[item.layer] = id
+                self.layers:setLayer(item.layer, item.image)
+            end
         end
     end
 
     suit.layout:reset(300, 100)
-
-    suit.Label("Enabled items:", {align = "left"}, suit.layout:row(100, 50))
-    for id, enabled in pairs(self.enabledItems) do
-        if enabled then
-            suit.Label(items[id].name, {align = "center", id = ("enabledLabel_" .. id)}, suit.layout:row(100, 50))
-        end
-    end
 
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
     if suit.Button("Into Battle!", suit.layout:row(200, 40)).hit then
@@ -36,11 +51,14 @@ function CustomizeState:update(dt)
     if suit.Button("Back", suit.layout:row(200, 40)).hit then
         stack:pop()
     end
+
+    self.engine:update(dt)
 end
 
 function CustomizeState:draw()
     push:apply("start")
     suit.draw()
+    self.engine:draw()
     push:apply("end")
 end
 
