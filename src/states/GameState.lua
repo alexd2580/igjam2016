@@ -18,8 +18,8 @@ MothershipSystem = require("systems/MothershipSystem")
 AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse
+    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse'})
 
 function GameState:initialize(enabledItems)
     self.enabledItems = enabledItems
@@ -132,6 +132,7 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     bullet:add(HasEnemy(enemy_mothership))
     bullet:add(Drawable(resources.images.fighter_missile))
     bullet:add(Health(1))
+    bullet:add(Pulse(0.5))
 
     self.engine:addEntity(bullet)
 end
