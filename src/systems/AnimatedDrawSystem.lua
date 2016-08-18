@@ -12,8 +12,16 @@ function AnimatedDrawSystem:draw()
         animation.frames_left = animation.frames_left - 1
 
         if animation.image_number > #animation.images then
-            entity:get('Health').points = 0
-            return
+            if animation.loop then
+                animation.image_number = 1
+            else
+                if entity:has('Health') then
+                    entity:get('Health').points = 0
+                else
+                    print('Orphan animated entity which is not looped, and has no health')
+                end
+                return
+            end
         end
 
         local image = animation.images[animation.image_number]
@@ -42,7 +50,7 @@ function AnimatedDrawSystem:draw()
 end
 
 function AnimatedDrawSystem:requires()
-    return {"Animation", "Physical", "Health"}
+    return {"Animation", "Physical"}
 end
 
 return AnimatedDrawSystem

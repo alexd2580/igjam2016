@@ -14,6 +14,10 @@ function DrawSystem:draw()
             end
 
             local entity_x, entity_y, angle, sx, sy
+            if entity:has('Pulse') then
+                local pulse = entity:get('Pulse')
+                print(pulse)
+            end
             if entity:has('Physical') then
                 local physical = entity:get('Physical')
                 angle = physical.body:getAngle()
@@ -22,6 +26,21 @@ function DrawSystem:draw()
                 angle = -math.pi/2
                 entity_x, entity_y = entity:get('Transformable').position:unpack()
                 sx, sy = entity:get('Transformable').scale:unpack()
+            end
+
+            local flash_white = false
+            if entity:has('HitIndicator') then
+                hi =  entity:get('HitIndicator')
+                if hi.hit then
+                    flash_white = true
+                    hi.hit = false
+                end
+            else
+                flash_white = false
+            end
+
+            if flash_white then
+                love.graphics.setColor(5000,5000,5000,255)
             end
 
             for i = 1, maxIndex, 1 do
@@ -36,8 +55,15 @@ function DrawSystem:draw()
                end
             end
 
+            if flash_white then
+                love.graphics.setColor(255,255,255,255)
+            end
+
             if debug then
-                love.graphics.circle("fill", entity_x, entity_y, physical.shape:getRadius(), 100)
+                if entity:has('Physical') then
+                    local physical = entity:get('Physical')
+                    love.graphics.circle("fill", entity_x, entity_y, physical.shape:getRadius(), 100)
+                end
             end
 
             if entity.psystem then

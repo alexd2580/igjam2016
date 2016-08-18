@@ -26,6 +26,8 @@ require("components/LayeredDrawable")
 require("components/Transformable")
 require("components/Animation")
 require("components/LaserBeam")
+require("components/HitIndicator")
+require("components/Pulse")
 
 local MenuState = require('states/MenuState')
 
@@ -40,9 +42,9 @@ function love.load()
 
     resources = Resources()
 
-    resources:addImage('fighter', 'assets/img/fighterConfig/fighter.png')
+    resources:addImage('fighter', 'assets/img/fighterConfig/fighterTiny.png')
     resources:addImage('fighter_missile', 'assets/img/fighterConfig/missile.png')
-    resources:addImage('mask_base', 'assets/img/maskConfig/colorBlackSmall.png')
+    resources:addImage('mask_base', 'assets/img/player/colorBlackSmall.png')
     resources:addImage('block_particle', 'assets/img/block_particle.png')
     resources:addImage('round_particle', 'assets/img/round_particle.png')
     resources:addImage('stars_bg', 'assets/img/stars_bg.png')
