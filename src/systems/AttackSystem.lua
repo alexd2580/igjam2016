@@ -13,14 +13,16 @@ function AttackSystem:update(dt)
         enemy_x, enemy_y = enemy_mothership:get('Physical').body:getPosition()
         enemy_vector = Vector(enemy_x, enemy_y)
 
-        weapon = entity:get('Weapon')
-        body = entity:get('Physical').body
+        local weapon = entity:get('Weapon')
+        local body = entity:get('Physical').body
 
         member_x, member_y = body:getPosition()
         member_vector = Vector(member_x, member_y)
         relative = enemy_vector - member_vector
         direction = relative:normalize()
         dir_rad = direction:getRadian()
+
+        local distance = member_vector:distanceTo(enemy_vector)
 
         local final_rad = dir_rad
         local rand_rad = 0
@@ -39,7 +41,7 @@ function AttackSystem:update(dt)
 
         weapon.since_last_fired = weapon.since_last_fired + dt
 
-        if shoot_angle > 0.95 and weapon.since_last_fired > weapon.cooldown then
+        if shoot_angle > 0.95 and weapon.since_last_fired > weapon.cooldown and distance <= weapon.range then
             weapon.since_last_fired = 0
             if weapon.type == 'laser' then
                 local beam = Entity()

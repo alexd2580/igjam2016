@@ -15,7 +15,8 @@ items = {
                 type = 'laser',
                 damage = 2,
                 cooldown = 2,
-                hitChance = .5
+                hitChance = .5,
+                range = 150
             })
         end,
         layer = 3,
@@ -29,7 +30,8 @@ items = {
                 type = 'missile',
                 damage = 10,
                 cooldown = 4,
-                hitChance = 1
+                hitChance = 1,
+                range = 400
             })
         end,
         layer = 3,

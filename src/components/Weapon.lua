@@ -6,4 +6,5 @@ function Weapon:initialize(opts)
     self.hitChance = opts.hitChance
     self.damage = opts.damage
     self.type = opts.type
+    self.range = opts.range
 end
