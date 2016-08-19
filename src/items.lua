@@ -46,7 +46,7 @@ items = {
             return HitDamage({
                 frontal = 10,
                 rear = 20,
-                mothership = 20
+                mothership = 10
             })
         end,
         layer = 3,
