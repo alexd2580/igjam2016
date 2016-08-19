@@ -4,6 +4,7 @@ local GameState = class('GameState', State)
 require("events/BulletHitDrone")
 require("events/BulletHitMothership")
 require("events/DroneDead")
+require("events/DroneHitEnemy")
 
 -- systems
 DrawSystem = require("systems/DrawSystem")
@@ -20,18 +21,29 @@ GameOverSystem = require("systems/GameOverSystem")
 PulseSystem = require("systems/PulseSystem")
 LaserSystem = require('systems/LaserSystem')
 ShieldSystem = require('systems/ShieldSystem')
+DroneHitSystem = require('systems/DroneHitSystem')
+AISystem = require('systems/AISystem')
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse, MothershipAI =
+    Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse', 'MothershipAI'})
 
-function GameState:initialize(enabledItems)
-    self.enabledItems = enabledItems
+function GameState:initialize(level, enabledItemsPlayer, enemy_config)
+    self.level = level
+    self.enabledItemsPlayer = enabledItemsPlayer
+    self.enemy_config = enemy_config
+	shake_offset = 0
+	self.shake_magnitude = 1
+	shake_duration = 0
 end
 
-function GameState:create_mothership(mothership, x, y, enemy)
+function GameState:create_mothership(mothership, x, y, enemy, enabled_items, ai)
     local drawable = LayeredDrawable()
-    drawable:setLayer(1, resources.images.mask_base)
-    for layer, id in pairs(self.enabledItems) do
+	if mothership == player then
+		drawable:setLayer(1, resources.images.mask_base)
+	else
+		drawable:setLayer(1, resources.images.enemy100)
+	end
+    for layer, id in pairs(enabled_items) do
         drawable:setLayer(layer, items[id].image)
     end
     mothership:add(drawable)
@@ -46,16 +58,22 @@ function GameState:create_mothership(mothership, x, y, enemy)
     body:setAngle(-math.pi / 2)
     body:setMass(6)
 
-    mothership:add(Health(100))
+    mothership:add(Health(1000))
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
     mothership:add(HitIndicator())
+
+    if ai then
+        mothership:add(MothershipAI(ai))
+    end
+
     return mothership
 end
 
-function GameState:spawn_swarm(mothership, enemy_mothership)
-    for i = 1, 30, 1 do
+function GameState:spawn_swarm(mothership, enabled_items, enemy_mothership)
+    local swarm_size = 60
+    for i = 1, swarm_size, 1 do
         drone = lt.Entity()
 
         base_x, base_y = mothership:get('Physical').body:getPosition()
@@ -71,14 +89,18 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         fixture:setUserData(drone)
         body:setMass(2)
 
-        for layer, id in pairs(self.enabledItems) do
+        for layer, id in pairs(enabled_items) do
             drone:add(items[id].component())
         end
 
         drone:add(Physical(body, fixture, shape))
         drone:add(SwarmMember(mothership))
         drone:add(HasEnemy(enemy_mothership))
-        drone:add(Drawable(resources.images.fighter))
+		if mothership == player then
+			drone:add(Drawable(resources.images.fighter))
+		else
+			drone:add(Drawable(resources.images.fighterEnemy))
+		end
         drone:add(Health(100))
         drone:add(HitIndicator())
         self.engine:addEntity(drone)
@@ -137,9 +159,11 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     bullet:add(Pulse(0.2))
 
     self.engine:addEntity(bullet)
+
+    -- love.audio.play(resource.music.laserShot)
 end
 
-function bullet_hit_thing(a, b)
+function is_a_bullet_hit(a, b)
     if not a:has('Bullet') then
         return false -- a must be a bullet
     end
@@ -152,34 +176,69 @@ function bullet_hit_thing(a, b)
     return true -- a has hit something physical
 end
 
+function is_a_drone_hit(a, b)
+    if not a:has('SwarmMember') then
+        return false
+    end
+    if b:has('SwarmMember') then
+        return true
+    end
+    if b:has('Mothership') then
+        return true
+    end
+    return false
+end
+
+function check_enemity(a, b)
+    enemy_mothership = a:get('HasEnemy').enemy_mothership
+    if b == enemy_mothership then
+        return "mothership"
+    elseif b:has('SwarmMember') then
+        b_mothership = b:get('SwarmMember').mothership
+        if enemy_mothership == b_mothership then
+            return "drone"
+        end
+    end
+    return false
+end
+
+function bullet_hit_object(bullet, object)
+    local is_enemy = check_enemity(bullet, object)
+    if not is_enemy then return end
+    local evmgr = stack:current().eventmanager
+    if is_enemy == "mothership" then
+        evmgr:fireEvent(BulletHitMothership(bullet, object, bullet:get('Bullet').damage))
+    end
+    if is_enemy == "drone" then
+        evmgr:fireEvent(BulletHitDrone(bullet, object))
+    end
+end
+
+function drone_hit_object(drone, object)
+    local is_enemy = check_enemity(drone, object)
+    if is_enemy then
+        local evmgr = stack:current().eventmanager
+        evmgr:fireEvent(DroneHitEnemy(drone, object, is_enemy))
+    end
+end
+
 function beginContact(a, b, coll)
+    if stack:current().eventmanager == nil then
+        print('Ignoring collision')
+        return false
+    end
     a = a:getUserData()
     b = b:getUserData()
 
     local bullet, object = nil, nil
-    if bullet_hit_thing(a, b) then
-        bullet, object = a, b
-    elseif bullet_hit_thing(b, a) then
-        bullet, object = b, a
-    else
-        return
-    end
-
-    enemy_mothership = bullet:get('HasEnemy').enemy_mothership
-
-    local evmgr = stack:current().eventmanager
-    if evmgr == nil then
-        print('Ignoring collision')
-        return
-    end
-    if object == enemy_mothership then
-        evmgr:fireEvent(BulletHitMothership(bullet, object, bullet:get('Bullet').damage))
-    elseif object:has('SwarmMember') then
-        -- object is a swarmmember
-        object_mothership = object:get('SwarmMember').mothership
-        if enemy_mothership == object_mothership then
-            evmgr:fireEvent(BulletHitDrone(bullet, object))
-        end
+    if is_a_bullet_hit(a, b) then
+        bullet_hit_object(a, b)
+    elseif is_a_bullet_hit(b, a) then
+        bullet_hit_object(b, a)
+    elseif is_a_drone_hit(a, b) then
+        drone_hit_object(a, b)
+    elseif is_a_drone_hit(b, a) then
+        drone_hit_object(b, a)
     end
 end
 
@@ -219,6 +278,7 @@ function GameState:load()
     self.engine:addSystem(PulseSystem())
     self.engine:addSystem(shieldSystem, 'update')
     self.engine:addSystem(shieldSystem, 'draw')
+    self.engine:addSystem(AISystem())
 
     -- keep these two at the end
     self.engine:addSystem(DeathSystem())
@@ -231,20 +291,24 @@ function GameState:load()
     self.eventmanager:addListener("BulletHitMothership",
         self.bullet_hit_system, self.bullet_hit_system.mothership_hit)
 
+    self.drone_hit_system = DroneHitSystem(self)
+    self.eventmanager:addListener("DroneHitEnemy",
+        self.drone_hit_system, self.drone_hit_system.drone_hit_enemy)
+
     -- add callback to spawn explosion
     self.eventmanager:addListener("DroneDead", self, self.spawn_drone_explosion)
 
     player = lt.Entity()
     enemy = lt.Entity()
 
-    player = self:create_mothership(player, 100, 100, enemy)
-    enemy = self:create_mothership(enemy, 430, 380, player)
+    player = self:create_mothership(player, 100, 100, enemy, self.enabledItemsPlayer, nil)
+    enemy = self:create_mothership(enemy, 430, 380, player, self.enemy_config.layers, self.enemy_config.mothership_ai)
 
     self.engine:addEntity(player)
     self.engine:addEntity(enemy)
 
-    self:spawn_swarm(player, enemy)
-    self:spawn_swarm(enemy, player)
+    self:spawn_swarm(player, self.enabledItemsPlayer, enemy)
+    self:spawn_swarm(enemy, self.enemy_config.layers, player)
 end
 
 local event_queue = {}
@@ -261,7 +325,7 @@ function GameState:handle_events()
 end
 
 function GameState:update(dt)
-    self.bg_pos100 = self.bg_pos100 - 1
+    self.bg_pos100 = self.bg_pos100 - 3
     if self.bg_pos100 <= -resources.images.stars_bg:getWidth() then
         self.bg_pos100 = 0
     end
@@ -269,26 +333,33 @@ function GameState:update(dt)
     if self.bg_pos80 <= -resources.images.stars_90:getWidth() then
         self.bg_pos80 = 0
     end
-    self.bg_pos60 = self.bg_pos60 - 3
+    self.bg_pos60 = self.bg_pos60 - 1
     if self.bg_pos60 <= -resources.images.stars_180:getWidth() then
         self.bg_pos60 = 0
     end
     self.engine:update(dt)
     self.world:update(dt)
     self:handle_events()
+    if shake_offset < shake_duration then
+        shake_offset = shake_offset + dt
+    end
 end
 
 function GameState:draw()
-    love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
-    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
-    love.graphics.setColor(255, 255, 255, 204)
-    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
-    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
+	if shake_offset < shake_duration then
+        local dx = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        local dy = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        love.graphics.translate(dx, dy)
+    end
     love.graphics.setColor(255, 255, 255, 153)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60, 0)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60 + resources.images.stars_180:getWidth(), 0)
+    love.graphics.setColor(255, 255, 255, 204)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
     love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
     self.engine:draw()
 end
 

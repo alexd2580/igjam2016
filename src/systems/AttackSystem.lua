@@ -47,6 +47,8 @@ function AttackSystem:update(dt)
                 beam:add(LaserBeam(member_vector, target))
                 stack:current().engine:addEntity(beam)
                 stack:current().eventmanager:fireEvent(BulletHitMothership(nil, enemy_mothership, weapon.damage))
+                resources.sounds.laserShot:setVolume(0.05)
+                resources.sounds.laserShot:clone():play()
             elseif weapon.type == 'missile' then
                 self.gamestate:shoot_bullet(
                     member_vector, Vector.from_radians(final_rad), 200, enemy_mothership, weapon.damage)

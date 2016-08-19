@@ -19,6 +19,21 @@ function DrawSystem:draw()
                 local blink = math.sin(pulse.time_since_last_pulse) * 10000
                 love.graphics.setColor(blink, blink, blink, 255)
             end
+            if entity:has('Mothership') and entity:has('Health') then
+                local drawable = entity:get('LayeredDrawable')
+                local health = entity:get('Health')
+				if health.points < 100 and health.points >= 80 then
+					drawable:setLayer(2, resources.images.enemy80)
+				elseif health.points < 80 and health.points >= 60 then
+					drawable:setLayer(2, resources.images.enemy60)
+				elseif health.points < 60 and health.points >= 40 then
+					drawable:setLayer(2, resources.images.enemy40)
+				elseif health.points < 40 and health.points >= 20 then
+					drawable:setLayer(2, resources.images.enemy20)
+				elseif health.points < 20 and health.points >= 0 then
+					drawable:setLayer(2, resources.images.enemy00)
+				end
+			end
             if entity:has('Physical') then
                 local physical = entity:get('Physical')
                 angle = physical.body:getAngle()
