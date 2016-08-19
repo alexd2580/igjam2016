@@ -13,9 +13,10 @@ items = {
         component = function()
             return Weapon({
                 type = 'laser',
-                damage = 2,
+                damage = 3,
                 cooldown = 2,
                 hitChance = .5,
+                sprayAngle = 10,
                 range = 150
             })
         end,
@@ -28,10 +29,11 @@ items = {
         component = function()
             return Weapon({
                 type = 'missile',
-                damage = 10,
+                damage = 40,
                 cooldown = 4,
-                hitChance = 1,
-                range = 400
+                hitChance = .5,
+                sprayAngle = 10,
+                range = 500
             })
         end,
         layer = 3,
@@ -43,8 +45,8 @@ items = {
         component = function()
             return HitDamage({
                 frontal = 10,
-                rear = 50,
-                mothership = 10
+                rear = 20,
+                mothership = 20
             })
         end,
         layer = 3,

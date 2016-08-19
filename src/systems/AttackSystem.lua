@@ -28,7 +28,7 @@ function AttackSystem:update(dt)
         local rand_rad = 0
         if math.random() > weapon.hitChance then
             -- range in degrees
-            local offRange = 30
+            local offRange = weapon.sprayAngle
             local rand_off = offRange * (love.math.random() - .5)
             rand_rad = math.rad(rand_off)
             final_rad = dir_rad + rand_rad

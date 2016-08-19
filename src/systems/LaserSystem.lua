@@ -14,7 +14,7 @@ function LaserSystem:draw()
     love.graphics.setBlendMode('add')
     for _, entity in pairs(self.targets) do
         local beam = entity:get('LaserBeam')
-        love.graphics.setColor(78, 99, 207, beam.opacity * 255)
+        love.graphics.setColor(78, 99, 227, beam.opacity * 255)
         local ox, oy = beam.origin:unpack()
         local tx, ty = beam.target:unpack()
         love.graphics.line(ox, oy, tx, ty)
