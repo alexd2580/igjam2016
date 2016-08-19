@@ -2,6 +2,7 @@ local CustomizeState = class('CustomizeState', State)
 
 local GameState = require('states/GameState')
 local WonGameState = require('states/WonGameState')
+local PreBattleState = require('states/PreBattleState')
 
 local suit = require('lib/suit')
 
@@ -55,6 +56,8 @@ function CustomizeState:update(dt)
             suit.Label(item.name, {align = "center", id = ("enableLabel_" .. id)}, suit.layout:row(100, 50))
             local text = (self.enabledItems[item.layer] == id) and "Disable" or "Enable"
             if suit.Button(text, {id = ("enableButton_" .. id) }, suit.layout:row(100, 30)).hit then
+                resources.sounds.modificationApply:setVolume(0.5)
+                resources.sounds.modificationApply:play()
                 if self.enabledItems[item.layer] == id then
                     self.enabledItems[item.layer] = nil
                     self.layers:setLayer(item.layer, nil)
@@ -71,7 +74,8 @@ function CustomizeState:update(dt)
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
     if suit.Button("Into Battle!", suit.layout:row(200, 40)).hit then
         resources.sounds.click:play()
-        stack:push(GameState(self.level, self.enabledItems, levels[self.level] or default_level))
+        stack:push(PreBattleState(self.level, self.enabledItems))
+        -- stack:push(GameState(self.level, self.enabledItems, levels[self.level] or default_level))
     end
     if suit.Button("Back", suit.layout:row(200, 40)).hit then
         resources.sounds.click:play()

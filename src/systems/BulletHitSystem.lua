@@ -5,9 +5,12 @@ function BulletHitSystem:initialize(gamestate)
 end
 
 local function dealDamage(entity, damage)
-    if (not entity:has('Shield')) or entity:get('Shield').charge <= 0 then
+    local shield = entity:get('Shield')
+    if (not shield) or shield.charge <= 0 then
         entity:get('Health').points =
             entity:get('Health').points - damage
+    else
+        shield.charge = shield.charge - damage
     end
 end
 

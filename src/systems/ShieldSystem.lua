@@ -20,7 +20,8 @@ function ShieldSystem:update(dt)
 end
 
 function ShieldSystem:draw()
-
+    for _, entity in pairs(self.targets) do
+    end
 end
 
 function ShieldSystem:requires()

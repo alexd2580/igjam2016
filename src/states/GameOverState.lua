@@ -5,7 +5,7 @@ local suit = require('lib/suit')
 local texts = {
     won = {
         "You completely obliterated them.",
-        "Your parents will be so proud of you!",
+        "Your parents are extremely proud of you.",
         "Well played.",
         "gg ez"
     },
@@ -36,10 +36,12 @@ function GameOverState:update(dt)
 
     if self.won then
         if suit.Button("Next level", suit.layout:row(512, 40)).hit then
+            resources.sounds.click:play()
             stack:pop()
         end
     else
         if suit.Button("Back to Hangar", suit.layout:row(512, 40)).hit then
+            resources.sounds.click:play()
             stack:pop()
         end
     end
