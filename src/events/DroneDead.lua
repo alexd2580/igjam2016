@@ -6,4 +6,6 @@ function DroneDead:initialize(drone)
     self.angle = t_body:getAngle()
     self.vx, self.vy = t_body:getLinearVelocity()
     self.vr = t_body:getAngularVelocity()
+	shake_duration = 0.6
+	shake_offset = 0
 end

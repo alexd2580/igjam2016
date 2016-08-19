@@ -28,6 +28,9 @@ local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particl
 function GameState:initialize(level, enabledItems)
     self.level = level
     self.enabledItems = enabledItems
+	shake_offset = 0
+	self.shake_magnitude = 1
+	shake_duration = 0
 end
 
 function GameState:create_mothership(mothership, x, y, enemy)
@@ -326,9 +329,17 @@ function GameState:update(dt)
     self.engine:update(dt)
     self.world:update(dt)
     self:handle_events()
+    if shake_offset < shake_duration then
+        shake_offset = shake_offset + dt
+    end
 end
 
 function GameState:draw()
+	if shake_offset < shake_duration then
+        local dx = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        local dy = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        love.graphics.translate(dx, dy)
+    end
     love.graphics.setColor(255, 255, 255, 153)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60, 0)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60 + resources.images.stars_180:getWidth(), 0)
