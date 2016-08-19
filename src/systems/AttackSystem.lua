@@ -52,6 +52,8 @@ function AttackSystem:update(dt)
             elseif weapon.type == 'missile' then
                 self.gamestate:shoot_bullet(
                     member_vector, Vector.from_radians(final_rad), 200, enemy_mothership, weapon.damage)
+                resources.sounds.rocketLaunch:setVolume(0.1)
+                resources.sounds.rocketLaunch:clone():play()
             end
         end
 
