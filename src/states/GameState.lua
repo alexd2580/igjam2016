@@ -19,6 +19,7 @@ AnimatedDrawSystem = require("systems/AnimatedDrawSystem")
 GameOverSystem = require("systems/GameOverSystem")
 PulseSystem = require("systems/PulseSystem")
 LaserSystem = require('systems/LaserSystem')
+ShieldSystem = require('systems/ShieldSystem')
 
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse
     = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse'})
@@ -172,7 +173,7 @@ function beginContact(a, b, coll)
         return
     end
     if object == enemy_mothership then
-        evmgr:fireEvent(BulletHitMothership(bullet, object))
+        evmgr:fireEvent(BulletHitMothership(bullet, object, bullet:get('Bullet').damage))
     elseif object:has('SwarmMember') then
         -- object is a swarmmember
         object_mothership = object:get('SwarmMember').mothership
@@ -201,6 +202,7 @@ function GameState:load()
 
     local particlesSystem = ParticlesSystem()
     local laserSystem = LaserSystem()
+    local shieldSystem = ShieldSystem()
 
     -- add systems to engine
     self.engine:addSystem(DrawSystem())
@@ -214,11 +216,13 @@ function GameState:load()
     self.engine:addSystem(AnimatedDrawSystem())
     self.engine:addSystem(laserSystem, 'update')
     self.engine:addSystem(laserSystem, 'draw')
+    self.engine:addSystem(PulseSystem())
+    self.engine:addSystem(shieldSystem, 'update')
+    self.engine:addSystem(shieldSystem, 'draw')
 
     -- keep these two at the end
     self.engine:addSystem(DeathSystem())
     self.engine:addSystem(GameOverSystem())
-    self.engine:addSystem(PulseSystem())
 
     -- add eventbased systems to eventhandler
     self.bullet_hit_system = BulletHitSystem(self)
