@@ -36,10 +36,12 @@ function GameOverState:update(dt)
 
     if self.won then
         if suit.Button("Next level", suit.layout:row(512, 40)).hit then
+            resources.sounds.click:play()
             stack:pop()
         end
     else
         if suit.Button("Back to Hangar", suit.layout:row(512, 40)).hit then
+            resources.sounds.click:play()
             stack:pop()
         end
     end

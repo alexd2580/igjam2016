@@ -77,10 +77,10 @@ function love.load()
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
     resources:addSound('laserShot', 'assets/music/laserShot_2.mp3')
     resources:addSound('kaboom_1', 'assets/music/kaboom.ogg')
-    resources:addSound('rocketLaunch', 'assets/music/laserCool.ogg')
+    resources:addSound('rocketLaunch', 'assets/music/rocketLaunch.ogg') -- or rocket.ogg
     resources:addSound('click', 'assets/music/click_2.mp3')
     resources:addSound('startBattle', 'assets/music/openBattle.mp3')
-     resources:addSound('modificationApply', 'assets/music/applyModification.mp3')
+    resources:addSound('modificationApply', 'assets/music/modificationApply.ogg')
 
 
     resources:load()
