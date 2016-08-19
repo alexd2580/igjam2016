@@ -33,7 +33,7 @@ function GameState:initialize(level, enabledItemsPlayer, enemy_config)
     self.enabledItemsPlayer = enabledItemsPlayer
     self.enemy_config = enemy_config
 	shake_offset = 0
-	self.shake_magnitude = 1
+	shake_magnitude = 1
 	shake_duration = 0
 end
 
@@ -349,8 +349,8 @@ end
 
 function GameState:draw()
 	if shake_offset < shake_duration then
-        local dx = love.math.random(-self.shake_magnitude, self.shake_magnitude)
-        local dy = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        local dx = love.math.random(-shake_magnitude, shake_magnitude)
+        local dy = love.math.random(-shake_magnitude, shake_magnitude)
         love.graphics.translate(dx, dy)
     end
     love.graphics.setColor(255, 255, 255, 153)

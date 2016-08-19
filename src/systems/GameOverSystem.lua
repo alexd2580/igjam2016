@@ -23,6 +23,7 @@ function GameOverSystem:game_over()
 end
 
 function GameOverSystem:spawn_end_explosion(entity)
+    shake_magnitude = 20
     local explosion = lt.Entity()
     local x, y = entity:get('Physical').body:getPosition()
     local body = love.physics.newBody(stack:current().world, x, y, "dynamic")
