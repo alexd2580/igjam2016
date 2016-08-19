@@ -10,6 +10,7 @@ function CreditsState:update(dt)
 
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 50, 10, 10)
     if suit.Button("Back", suit.layout:row(200, 40)).hit then
+        resources.sounds.click:play()
         stack:pop()
     end
 end

@@ -90,6 +90,7 @@ function love.load()
     require('items')
     require('levels')
 
+    resources.sounds.click:setVolume(0.6)
     resources.music.bg:setLooping(true)
     resources.music.bg:setVolume(0.3)
     love.audio.play(resources.music.bg)
