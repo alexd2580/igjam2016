@@ -70,14 +70,19 @@ end
 function mimic(state, pos, velocity, enemy_pos, enemy_velocity)
     local desired_pos = Vector(512-enemy_pos.x, 448-enemy_pos.y)
     local diff = desired_pos - pos
-    return diff:normalize()
+    if diff:length() < 0.00001 then --rip
+        return nil, Vector(0,0)
+    else
+        return nil, diff:normalize()
+    end
 end
 
 levels[1].layers[items.shield.layer] = "shield"
+levels[1].mothership_ai = mimic
 
 levels[2].layers[items.shield.layer] = "shield"
 levels[2].layers[items.missiles.layer] = "missiles"
-levels[2].mothership_ai = sin_up_down
+levels[2].mothership_ai = mimic
 
 levels[3].layers[items.shield.layer] = "shield"
 levels[3].layers[items.missiles.layer] = "missiles"

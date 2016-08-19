@@ -42,7 +42,7 @@ function DroneHitSystem:drone_hit_enemy(event)
     end
 
     local def_health = def:get('Health')
-    if def_frontal and not is_mothership then
+    if def_frontal or is_mothership then
         def_health.points = def_health.points - damage_frontal
     else
         def_health.points = def_health.points - damage_rear

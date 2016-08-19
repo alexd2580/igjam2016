@@ -7,7 +7,7 @@ end
 local function dealDamage(entity, damage)
     if (not entity:has('Shield')) or entity:get('Shield').charge <= 0 then
         entity:get('Health').points =
-            entity:get('Health').points - event.damage
+            entity:get('Health').points - damage
     end
 end
 

@@ -118,7 +118,7 @@ function Vector.from_radians(rad)
 end
 
 function Vector:null()
-    return x == 0 or y == 0
+    return x == 0 and y == 0
 end
 
 function Vector:unpack()
