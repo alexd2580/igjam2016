@@ -9,6 +9,7 @@ function DroneHitSystem:drone_hit_enemy(event)
 
     local atk = event.drone
     local def = event.enemy
+    if not (atk:has('HitDamage') or def:has('HitDamage')) then return end
 
     local damage_frontal = 10
     local damage_rear = 70
@@ -32,41 +33,31 @@ function DroneHitSystem:drone_hit_enemy(event)
     local atk_frontal = atk_angle > 0.60
     local def_frontal = def_angle > 0.60
 
-    function handle_dmg(entity, hit_frontal)
-        local health = entity:get('Health')
+    function handle_dmg(dealing, taking, hit_frontal)
+        if not dealing:has('HitDamage') then return end
+        local health = taking:get('Health')
+        local damage = dealing:get('HitDamage')
         if hit_frontal then
-            health.points = health.points - damage_frontal
+            health.points = health.points - damage.frontal
         else
-            health.points = health.points - damage_rear
-            if entity:has('HitIndicator') then
-                entity:get('HitIndicator').hit = true
+            health.points = health.points - damage.rear
+            if taking:has('HitIndicator') then
+                taking:get('HitIndicator').hit = true
             end
         end
     end
 
-    handle_dmg(atk, atk_frontal)
+    handle_dmg(def, atk, atk_frontal)
 
     local def_health = def:get('Health')
-    if is_mothership then
-        def_health.points = def_health.points - damage_mtsp
+    if is_mothership and atk:has('HitDamage') then
+        def_health.points = def_health.points - atk:get('HitDamage').mothership
         if def:has('HitIndicator') then
             def:get('HitIndicator').hit = true
         end
     else
-        handle_dmg(def, def_frontal)
+        handle_dmg(atk, def, def_frontal)
     end
 end
-
---[[
-    tgt:get('Health').points =
-        tgt:get('Health').points - event.bullet:get('Bullet').damage
-
-    if tgt:get('Health').points <= 0 then
-        self.gamestate:enqueue_event(DroneDead(tgt))
-    end
-
-    if tgt:has('HitIndicator') then
-        tgt:get('HitIndicator').hit = true
-    end]]
 
 return DroneHitSystem

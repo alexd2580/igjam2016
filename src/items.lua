@@ -1,4 +1,4 @@
-local Shield, Weapon = Component.load({"Shield", "Weapon"})
+local Shield, Weapon, HitDamage = Component.load({"Shield", "Weapon", "HitDamage"})
 
 items = {
     shield = {
@@ -37,5 +37,18 @@ items = {
         layer = 3,
         level = 4,
         image = resources.images.eyes2
+    },
+    ram = {
+        name = "Battering Ram 2050 Edition",
+        component = function()
+            return HitDamage({
+                frontal = 10,
+                rear = 50,
+                mothership = 10
+            })
+        end,
+        layer = 3,
+        level = 1,
+        image = resources.images.eyes1
     }
 }

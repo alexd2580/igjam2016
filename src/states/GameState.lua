@@ -23,6 +23,7 @@ LaserSystem = require('systems/LaserSystem')
 ShieldSystem = require('systems/ShieldSystem')
 DroneHitSystem = require('systems/DroneHitSystem')
 AISystem = require('systems/AISystem')
+ItemDrawSystem = require('systems/ItemDrawSystem')
 
 local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse, MothershipAI =
     Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse', 'MothershipAI'})
@@ -58,7 +59,7 @@ function GameState:create_mothership(mothership, x, y, enemy, enabled_items, ai)
     body:setAngle(-math.pi / 2)
     body:setMass(6)
 
-    mothership:add(Health(2000))
+    mothership:add(Health(1000))
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
@@ -279,6 +280,7 @@ function GameState:load()
     self.engine:addSystem(shieldSystem, 'update')
     self.engine:addSystem(shieldSystem, 'draw')
     self.engine:addSystem(AISystem())
+    self.engine:addSystem(ItemDrawSystem())
 
     -- keep these two at the end
     self.engine:addSystem(DeathSystem())
