@@ -111,9 +111,7 @@ function mimic(state, pos, velocity, enemy_pos, enemy_velocity)
     end
 end
 
-levels[1].layers[items.shield.layer] = "shield"
-
-levels[2].layers[items.shield.layer] = "shield"
+levels[2].layers[items.missiles.layer] = "missiles"
 levels[2].mothership_ai = sin_up_down
 
 levels[3].layers[items.shield.layer] = "shield"

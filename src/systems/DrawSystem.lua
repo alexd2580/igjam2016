@@ -22,15 +22,16 @@ function DrawSystem:draw()
             if entity:has('Mothership') and entity:has('Health') then
                 local drawable = entity:get('LayeredDrawable')
                 local health = entity:get('Health')
-				if health.points < 100 and health.points >= 80 then
+                local percent = (health.points/health.max) * 100
+				if percent < 100 and percent >= 80 then
 					drawable:setLayer(2, resources.images.enemy80)
-				elseif health.points < 80 and health.points >= 60 then
+				elseif percent < 80 and percent >= 60 then
 					drawable:setLayer(2, resources.images.enemy60)
-				elseif health.points < 60 and health.points >= 40 then
+				elseif percent < 60 and percent >= 40 then
 					drawable:setLayer(2, resources.images.enemy40)
-				elseif health.points < 40 and health.points >= 20 then
+				elseif percent < 40 and percent >= 20 then
 					drawable:setLayer(2, resources.images.enemy20)
-				elseif health.points < 20 and health.points >= 0 then
+				elseif percent < 20 and percent >= 0 then
 					drawable:setLayer(2, resources.images.enemy00)
 				end
 			end

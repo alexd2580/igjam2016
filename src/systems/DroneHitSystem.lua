@@ -5,14 +5,14 @@ function DroneHitSystem:initialize(gamestate)
 end
 
 function DroneHitSystem:drone_hit_enemy(event)
-    local damage_frontal = 10
-    local damage_rear = 70
-    local damage_mtsp = 50
-
     local is_mothership = event.enemy_type == "mothership"
 
     local atk = event.drone
     local def = event.enemy
+
+    local damage_frontal = 10
+    local damage_rear = 70
+    local damage_mtsp = 50
 
     local atk_body = atk:get('Physical').body
     local atk_x, atk_y = atk_body:getPosition()
