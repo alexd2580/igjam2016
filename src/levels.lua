@@ -29,22 +29,6 @@ levels = {
     {
         layers = {},
         mothership_ai = nil
-    },
-    {
-        layers = {},
-        mothership_ai = nil
-    },
-    {
-        layers = {},
-        mothership_ai = nil
-    },
-    {
-        layers = {},
-        mothership_ai = nil
-    },
-    {
-        layers = {},
-        mothership_ai = nil
     }
 }
 
@@ -131,19 +115,3 @@ levels[5].mothership_ai = mimic
 levels[6].layers[items.shield.layer] = "shield"
 levels[6].layers[items.laser.layer] = "laser"
 levels[6].mothership_ai = sin_both
-
-levels[7].layers[items.shield.layer] = "shield"
-levels[7].layers[items.laser.layer] = "laser"
-levels[7].mothership_ai = mimic
-
-levels[8].layers[items.shield.layer] = "shield"
-levels[8].layers[items.laser.layer] = "laser"
-levels[8].mothership_ai = sin_both
-
-levels[9].layers[items.shield.layer] = "shield"
-levels[9].layers[items.laser.layer] = "laser"
-levels[9].mothership_ai = sin_both
-
-levels[10].layers[items.shield.layer] = "shield"
-levels[10].layers[items.laser.layer] = "laser"
-levels[10].mothership_ai = sin_both

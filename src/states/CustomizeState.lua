@@ -151,7 +151,7 @@ function CustomizeState:loadLevel(level)
     if level < 1 then
         level = 1
     end
-    if level > 10 then
+    if level > #levels then
         stack:pop()
         stack:push(WonGameState())
     end
