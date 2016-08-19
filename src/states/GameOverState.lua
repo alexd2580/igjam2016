@@ -26,7 +26,11 @@ end
 function GameOverState:update(dt)
     suit.updateMouse(push:toGame(love.mouse.getPosition()))
     suit.layout:reset(0, 100)
-    suit.Label("Game Over", {align = "center"}, suit.layout:row(512, 50))
+	if self.won then
+		suit.Label("Victory", {align = "center"}, suit.layout:row(512, 50))
+	else
+		suit.Label("Game Over", {align = "center"}, suit.layout:row(512, 50))
+	end
 
     suit.Label(self.text, {}, suit.layout:row(512, 50))
 

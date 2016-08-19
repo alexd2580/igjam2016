@@ -20,6 +20,7 @@ function MenuState:initialize()
     self.bg4_speed = 0.9
     self.bg4_xpos = 500
     self.bg4_ypos = 40
+    self.title_phase = 0
 end
 
 function MenuState:load()
@@ -58,6 +59,8 @@ function MenuState:update(dt)
         self.bg4_xpos = game_width * 2
         self.bg4_ypos = math.random(20, game_height - 20)
     end
+
+    self.title_phase = self.title_phase + dt
 end
 
 function MenuState:draw()
@@ -68,8 +71,17 @@ function MenuState:draw()
     love.graphics.draw(resources.images.bg2, self.bg2_pos + resources.images.bg2:getWidth() * self.bg2_scale, 0, 0, self.bg2_scale)
     love.graphics.draw(resources.images.bg4, self.bg4_xpos, self.bg4_ypos, 0, self.bg4_scale)
     love.graphics.draw(resources.images.bg3, self.bg3_xpos, self.bg3_ypos, 0, self.bg3_scale)
-    love.graphics.draw(resources.images.title, 0, 0)
+    local title_scale = math.abs(math.sin(self.title_phase * 0.4)) * 0.1 + 1
+    love.graphics.draw(resources.images.title,
+                       resources.images.title:getWidth() / 2,
+                       resources.images.title:getHeight() / 2,
+                       0,
+                       title_scale, title_scale,
+                       resources.images.title:getWidth() / 2,
+                       resources.images.title:getHeight() / 2)
+    love.graphics.setBlendMode('add')
     suit:draw()
+    love.graphics.setBlendMode('alpha')
     push:apply("end")
 end
 

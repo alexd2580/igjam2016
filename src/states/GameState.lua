@@ -30,11 +30,18 @@ function GameState:initialize(level, enabledItemsPlayer, enemy_config)
     self.level = level
     self.enabledItemsPlayer = enabledItemsPlayer
     self.enemy_config = enemy_config
+	shake_offset = 0
+	self.shake_magnitude = 1
+	shake_duration = 0
 end
 
 function GameState:create_mothership(mothership, x, y, enemy, enabled_items, ai)
     local drawable = LayeredDrawable()
-    drawable:setLayer(1, resources.images.mask_base)
+	if mothership == player then
+		drawable:setLayer(1, resources.images.mask_base)
+	else
+		drawable:setLayer(1, resources.images.enemy100)
+	end
     for layer, id in pairs(enabled_items) do
         drawable:setLayer(layer, items[id].image)
     end
@@ -88,7 +95,11 @@ function GameState:spawn_swarm(mothership, enabled_items, enemy_mothership)
         drone:add(Physical(body, fixture, shape))
         drone:add(SwarmMember(mothership))
         drone:add(HasEnemy(enemy_mothership))
-        drone:add(Drawable(resources.images.fighter))
+		if mothership == player then
+			drone:add(Drawable(resources.images.fighter))
+		else
+			drone:add(Drawable(resources.images.fighterEnemy))
+		end
         drone:add(Health(100))
         drone:add(HitIndicator())
         self.engine:addEntity(drone)
@@ -311,7 +322,7 @@ function GameState:handle_events()
 end
 
 function GameState:update(dt)
-    self.bg_pos100 = self.bg_pos100 - 1
+    self.bg_pos100 = self.bg_pos100 - 3
     if self.bg_pos100 <= -resources.images.stars_bg:getWidth() then
         self.bg_pos100 = 0
     end
@@ -319,26 +330,33 @@ function GameState:update(dt)
     if self.bg_pos80 <= -resources.images.stars_90:getWidth() then
         self.bg_pos80 = 0
     end
-    self.bg_pos60 = self.bg_pos60 - 3
+    self.bg_pos60 = self.bg_pos60 - 1
     if self.bg_pos60 <= -resources.images.stars_180:getWidth() then
         self.bg_pos60 = 0
     end
     self.engine:update(dt)
     self.world:update(dt)
     self:handle_events()
+    if shake_offset < shake_duration then
+        shake_offset = shake_offset + dt
+    end
 end
 
 function GameState:draw()
-    love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
-    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
-    love.graphics.setColor(255, 255, 255, 204)
-    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
-    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
+	if shake_offset < shake_duration then
+        local dx = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        local dy = love.math.random(-self.shake_magnitude, self.shake_magnitude)
+        love.graphics.translate(dx, dy)
+    end
     love.graphics.setColor(255, 255, 255, 153)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60, 0)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60 + resources.images.stars_180:getWidth(), 0)
+    love.graphics.setColor(255, 255, 255, 204)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
     love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
     self.engine:draw()
 end
 

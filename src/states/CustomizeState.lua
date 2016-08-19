@@ -1,6 +1,7 @@
 local CustomizeState = class('CustomizeState', State)
 
 local GameState = require('states/GameState')
+local WonGameState = require('states/WonGameState')
 
 local suit = require('lib/suit')
 
@@ -21,6 +22,7 @@ function CustomizeState:initialize(level)
     self.bg4_speed = 0.9
     self.bg4_xpos = 500
     self.bg4_ypos = 40
+    self.mask_pos = 0
 end
 
 function CustomizeState:load()
@@ -35,7 +37,8 @@ function CustomizeState:load()
     self.mask = Entity()
     self.layers = LayeredDrawable()
 
-    self.mask:add(Transformable(Vector(400, 200), Vector(2, 2)))
+    self.original_mask_pos = Vector(230, 140)
+    self.mask:add(Transformable(self.original_mask_pos, Vector(2, 2)))
     self.mask:add(self.layers)
 
     self.layers:setLayer(1, resources.images.mask_base)
@@ -45,7 +48,7 @@ end
 
 function CustomizeState:update(dt)
     suit.updateMouse(push:toGame(love.mouse.getPosition()))
-    suit.layout:reset(100, 100)
+    suit.layout:reset(50, 50)
 
     for id, item in pairs(items) do
         if self.level >= item.level then
@@ -96,6 +99,8 @@ function CustomizeState:update(dt)
     end
 
     self.engine:update(dt)
+
+    self.mask_pos = self.mask_pos + dt
 end
 
 function CustomizeState:draw()
@@ -107,9 +112,17 @@ function CustomizeState:draw()
     love.graphics.draw(resources.images.bg4, self.bg4_xpos, self.bg4_ypos, 0, self.bg4_scale)
     love.graphics.draw(resources.images.bg3, self.bg3_xpos, self.bg3_ypos, 0, self.bg3_scale)
     love.graphics.draw(resources.images.hangar, 0, 0)
-    suit.draw()
+
+    love.graphics.setBlendMode('add')
+    suit:draw()
+    love.graphics.setBlendMode('alpha')
+
     self.engine:draw()
     love.graphics.print("Level " .. self.level, 20, 20, 0, 4)
+
+    self.mask:get('Transformable').position.y = self.original_mask_pos.y + math.sin(self.mask_pos)
+    self.mask:get('Transformable').position.x = self.original_mask_pos.x + math.sin(self.mask_pos * 3)
+    self.mask:get('Transformable').scale = Vector(1, 1) * math.max(2, math.sin(self.mask_pos * 0.4) + 2)
     push:apply("end")
 end
 
@@ -137,7 +150,8 @@ function CustomizeState:loadLevel(level)
         level = 1
     end
     if level > 10 then
-        level = 10
+        stack:pop()
+        stack:push(WonGameState())
     end
 
     self.level = level
