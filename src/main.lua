@@ -45,6 +45,7 @@ function love.load()
     resources = Resources()
 
     resources:addImage('fighter', 'assets/img/fighterConfig/fighterTiny.png')
+    resources:addImage('shield_aura', 'assets/img/fighterConfig/shieldAura.png')
     resources:addImage('shield_hit', 'assets/img/fighterConfig/shield.png')
     resources:addImage('fighterEnemy', 'assets/img/fighterConfig/fighterTinyEnemy.png')
     resources:addImage('fighter_missile', 'assets/img/fighterConfig/missile.png')
