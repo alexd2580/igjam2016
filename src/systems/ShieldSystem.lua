@@ -16,11 +16,20 @@ function ShieldSystem:update(dt)
             shield.charge = math.min(shield.capacity, shield.charge + shield.rechargeStep)
             shield.rechargeTimer = 0
         end
+        if shield.hitTimer > 0 then
+            shield.hitTimer = shield.hitTimer - dt
+        end
     end
 end
 
 function ShieldSystem:draw()
     for _, entity in pairs(self.targets) do
+        if entity:get('Shield').hitTimer > 0 then
+            local x, y = entity:get('Physical').body:getPosition()
+            local img = resources.images.shield_hit
+            love.graphics.setColor(255, 255, 255, 255 * entity:get('Shield').hitTimer * 2)
+            love.graphics.draw(img, x, y, 0, 1, 1, img:getWidth()/2, img:getHeight()/2)
+        end
     end
 end
 

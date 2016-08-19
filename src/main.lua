@@ -45,6 +45,7 @@ function love.load()
     resources = Resources()
 
     resources:addImage('fighter', 'assets/img/fighterConfig/fighterTiny.png')
+    resources:addImage('shield_hit', 'assets/img/fighterConfig/shield.png')
     resources:addImage('fighterEnemy', 'assets/img/fighterConfig/fighterTinyEnemy.png')
     resources:addImage('fighter_missile', 'assets/img/fighterConfig/missile.png')
     resources:addImage('mask_base', 'assets/img/player/colorBlackSmall.png')
@@ -68,6 +69,7 @@ function love.load()
     resources:addImage('bg4', 'assets/img/parallax-space-far-planets.png')
     resources:addImage('title', 'assets/img/startScene.png')
     resources:addImage('hangar', 'assets/img/hangar.png')
+    resources:addImage('preBattle', 'assets/img/PreBattle.png')
     resources:addImage('enemy100', 'assets/img/enemy/feindHealth100.png')
     resources:addImage('enemy80', 'assets/img/enemy/feindHealth80.png')
     resources:addImage('enemy60', 'assets/img/enemy/feindHealth60.png')
@@ -81,7 +83,6 @@ function love.load()
     resources:addSound('click', 'assets/music/click_2.mp3')
     resources:addSound('startBattle', 'assets/music/openBattle.mp3')
     resources:addSound('modificationApply', 'assets/music/modificationApply.ogg')
-
 
     resources:load()
 
