@@ -28,6 +28,7 @@ require("components/Animation")
 require("components/LaserBeam")
 require("components/HitIndicator")
 require("components/Pulse")
+require("components/MothershipAI")
 
 local MenuState = require('states/MenuState')
 
@@ -69,6 +70,7 @@ function love.load()
     resources:load()
 
     require('items')
+    require('levels')
 
     resources.music.bg:setLooping(true)
     -- love.audio.play(resources.music.bg)
