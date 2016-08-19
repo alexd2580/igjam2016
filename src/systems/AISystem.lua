@@ -14,7 +14,6 @@ function AISystem:update(dt)
         local evx, evy = enemy:getLinearVelocity()
 
         ai.state, force = func(state, Vector(x, y), Vector(vx, vy), Vector(ex, ey), Vector(evx, evy))
-        print(force.x, force.y)
         body:applyForce(1000 * force.x, 1000 * force.y)
     end
 end

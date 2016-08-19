@@ -7,6 +7,7 @@ end
 function DroneHitSystem:drone_hit_enemy(event)
     local damage_frontal = 10
     local damage_rear = 70
+    local damage_mtsp = 50
 
     local is_mothership = event.enemy_type == "mothership"
 
@@ -31,24 +32,28 @@ function DroneHitSystem:drone_hit_enemy(event)
     local atk_frontal = atk_angle > 0.60
     local def_frontal = def_angle > 0.60
 
-    local atk_health = atk:get('Health')
-    if atk_frontal then
-        atk_health.points = atk_health.points - damage_frontal
-    else
-        atk_health.points = atk_health.points - damage_rear
-        if atk:has('HitIndicator') then
-            atk:get('HitIndicator').hit = true
+    function handle_dmg(entity, hit_frontal)
+        local health = entity:get('Health')
+        if hit_frontal then
+            health.points = health.points - damage_frontal
+        else
+            health.points = health.points - damage_rear
+            if entity:has('HitIndicator') then
+                entity:get('HitIndicator').hit = true
+            end
         end
     end
 
+    handle_dmg(atk, atk_frontal)
+
     local def_health = def:get('Health')
-    if def_frontal or is_mothership then
-        def_health.points = def_health.points - damage_frontal
-    else
-        def_health.points = def_health.points - damage_rear
+    if is_mothership then
+        def_health.points = def_health.points - damage_mtsp
         if def:has('HitIndicator') then
             def:get('HitIndicator').hit = true
         end
+    else
+        handle_dmg(def, def_frontal)
     end
 end
 
