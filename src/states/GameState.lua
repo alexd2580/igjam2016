@@ -303,7 +303,7 @@ function GameState:handle_events()
 end
 
 function GameState:update(dt)
-    self.bg_pos100 = self.bg_pos100 - 1
+    self.bg_pos100 = self.bg_pos100 - 3
     if self.bg_pos100 <= -resources.images.stars_bg:getWidth() then
         self.bg_pos100 = 0
     end
@@ -311,7 +311,7 @@ function GameState:update(dt)
     if self.bg_pos80 <= -resources.images.stars_90:getWidth() then
         self.bg_pos80 = 0
     end
-    self.bg_pos60 = self.bg_pos60 - 3
+    self.bg_pos60 = self.bg_pos60 - 1
     if self.bg_pos60 <= -resources.images.stars_180:getWidth() then
         self.bg_pos60 = 0
     end
@@ -321,16 +321,15 @@ function GameState:update(dt)
 end
 
 function GameState:draw()
-    love.graphics.setColor(255, 255, 255, 255)
-    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
-    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
-    love.graphics.setColor(255, 255, 255, 204)
-    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
-    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
     love.graphics.setColor(255, 255, 255, 153)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60, 0)
     love.graphics.draw(resources.images.stars_180, self.bg_pos60 + resources.images.stars_180:getWidth(), 0)
+    love.graphics.setColor(255, 255, 255, 204)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80, 0)
+    love.graphics.draw(resources.images.stars_90, self.bg_pos80 + resources.images.stars_90:getWidth(), 0)
     love.graphics.setColor(255, 255, 255, 255)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100, 0)
+    love.graphics.draw(resources.images.stars_bg, self.bg_pos100 + resources.images.stars_bg:getWidth(), 0)
     self.engine:draw()
 end
 
