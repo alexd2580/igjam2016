@@ -90,7 +90,7 @@ function love.load()
 
     resources.music.bg:setLooping(true)
     resources.music.bg:setVolume(0.3)
-    -- love.audio.play(resources.music.bg)
+    love.audio.play(resources.music.bg)
     game_width, game_height = 512, 448
     local window_width, window_height = love.window.getDesktopDimensions()
 
