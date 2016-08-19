@@ -6,6 +6,10 @@ local PreBattleState = require('states/PreBattleState')
 
 local suit = require('lib/suit')
 
+function CustomizeState:startGame()
+    stack:push(PreBattleState(self.level, self.enabledItems))
+end
+
 function CustomizeState:initialize(level)
     self:loadLevel(level)
 
@@ -74,8 +78,7 @@ function CustomizeState:update(dt)
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
     if suit.Button("Into Battle!", suit.layout:row(200, 40)).hit then
         resources.sounds.click:play()
-        stack:push(PreBattleState(self.level, self.enabledItems))
-        -- stack:push(GameState(self.level, self.enabledItems, levels[self.level] or default_level))
+        self:startGame()
     end
     if suit.Button("Back", suit.layout:row(200, 40)).hit then
         resources.sounds.click:play()
@@ -137,6 +140,9 @@ function CustomizeState:textinput(t)
 end
 
 function CustomizeState:keypressed(key)
+    if key == "space" then
+        self:startGame()
+    end
     if key == "[" then
         self:loadLevel(self.level - 1)
     end
