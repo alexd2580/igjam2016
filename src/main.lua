@@ -109,6 +109,10 @@ function love.keypressed(key)
         debug = not debug
     end
 
+    if key == "9" then
+        resources.music.bg:setVolume(0)
+    end
+
     stack:current():keypressed(key)
 end
 
