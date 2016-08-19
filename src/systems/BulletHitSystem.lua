@@ -10,7 +10,7 @@ local function dealDamage(entity, damage)
         entity:get('Health').points =
             entity:get('Health').points - damage
     else
-        shield.hitTimer = .5
+        shield.hitTimer = .3
         shield.charge = shield.charge - damage
     end
 end
