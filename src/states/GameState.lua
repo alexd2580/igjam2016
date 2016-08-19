@@ -21,26 +21,28 @@ GameOverSystem = require("systems/GameOverSystem")
 PulseSystem = require("systems/PulseSystem")
 LaserSystem = require('systems/LaserSystem')
 DroneHitSystem = require('systems/DroneHitSystem')
+AISystem = require('systems/AISystem')
 
-local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse
-    = Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse'})
+local Drawable, Physical, SwarmMember, HasEnemy, Weapon, Bullet, Health, Particles, Mothership, Animation, LayeredDrawable, HitIndicator, Pulse, MothershipAI =
+    Component.load({'Drawable', 'Physical', 'SwarmMember', 'HasEnemy', 'Weapon', 'Bullet', 'Health', 'Particles', 'Mothership', 'Animation', 'LayeredDrawable', 'HitIndicator', 'Pulse', 'MothershipAI'})
 
-function GameState:initialize(level, enabledItems)
+function GameState:initialize(level, enabledItemsPlayer, enemy_config)
     self.level = level
-    self.enabledItems = enabledItems
+    self.enabledItemsPlayer = enabledItemsPlayer
+    self.enemy_config = enemy_config
 	shake_offset = 0
 	self.shake_magnitude = 1
 	shake_duration = 0
 end
 
-function GameState:create_mothership(mothership, x, y, enemy)
+function GameState:create_mothership(mothership, x, y, enemy, enabled_items, ai)
     local drawable = LayeredDrawable()
 	if mothership == player then
 		drawable:setLayer(1, resources.images.mask_base)
 	else
 		drawable:setLayer(1, resources.images.enemy100)
 	end
-    for layer, id in pairs(self.enabledItems) do
+    for layer, id in pairs(enabled_items) do
         drawable:setLayer(layer, items[id].image)
     end
     mothership:add(drawable)
@@ -60,10 +62,15 @@ function GameState:create_mothership(mothership, x, y, enemy)
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
     mothership:add(HitIndicator())
+
+    if ai then
+        mothership:add(MothershipAI(ai))
+    end
+
     return mothership
 end
 
-function GameState:spawn_swarm(mothership, enemy_mothership)
+function GameState:spawn_swarm(mothership, enabled_items, enemy_mothership)
     local swarm_size = 60
     for i = 1, swarm_size, 1 do
         drone = lt.Entity()
@@ -81,7 +88,7 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         fixture:setUserData(drone)
         body:setMass(2)
 
-        for layer, id in pairs(self.enabledItems) do
+        for layer, id in pairs(enabled_items) do
             drone:add(items[id].component())
         end
 
@@ -267,6 +274,7 @@ function GameState:load()
     self.engine:addSystem(AnimatedDrawSystem())
     self.engine:addSystem(laserSystem, 'update')
     self.engine:addSystem(laserSystem, 'draw')
+    self.engine:addSystem(AISystem())
 
     -- keep these two at the end
     self.engine:addSystem(DeathSystem())
@@ -290,14 +298,14 @@ function GameState:load()
     player = lt.Entity()
     enemy = lt.Entity()
 
-    player = self:create_mothership(player, 100, 100, enemy)
-    enemy = self:create_mothership(enemy, 430, 380, player)
+    player = self:create_mothership(player, 100, 100, enemy, self.enabledItemsPlayer, nil)
+    enemy = self:create_mothership(enemy, 430, 380, player, self.enemy_config.layers, self.enemy_config.mothership_ai)
 
     self.engine:addEntity(player)
     self.engine:addEntity(enemy)
 
-    self:spawn_swarm(player, enemy)
-    self:spawn_swarm(enemy, player)
+    self:spawn_swarm(player, self.enabledItemsPlayer, enemy)
+    self:spawn_swarm(enemy, self.enemy_config.layers, player)
 end
 
 local event_queue = {}

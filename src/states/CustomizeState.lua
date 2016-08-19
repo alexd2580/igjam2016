@@ -71,7 +71,7 @@ function CustomizeState:update(dt)
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
     if suit.Button("Into Battle!", suit.layout:row(200, 40)).hit then
         resources.sounds.click:play()
-        stack:push(GameState(self.level, self.enabledItems))
+        stack:push(GameState(self.level, self.enabledItems, levels[self.level] or default_level))
     end
     if suit.Button("Back", suit.layout:row(200, 40)).hit then
         resources.sounds.click:play()
