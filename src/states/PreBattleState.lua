@@ -28,6 +28,7 @@ end
 function PreBattleState:draw()
     push:apply("start")
     love.graphics.draw(resources.images.preBattle, 0, 0)
+    push:apply("end")
 end
 
 return PreBattleState
