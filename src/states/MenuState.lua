@@ -71,7 +71,7 @@ function MenuState:draw()
     love.graphics.draw(resources.images.bg2, self.bg2_pos + resources.images.bg2:getWidth() * self.bg2_scale, 0, 0, self.bg2_scale)
     love.graphics.draw(resources.images.bg4, self.bg4_xpos, self.bg4_ypos, 0, self.bg4_scale)
     love.graphics.draw(resources.images.bg3, self.bg3_xpos, self.bg3_ypos, 0, self.bg3_scale)
-    local title_scale = math.abs(math.sin(self.title_phase * 0.4)) + 0.5
+    local title_scale = math.abs(math.sin(self.title_phase * 0.4)) * 0.1 + 1
     love.graphics.draw(resources.images.title,
                        resources.images.title:getWidth() / 2,
                        resources.images.title:getHeight() / 2,

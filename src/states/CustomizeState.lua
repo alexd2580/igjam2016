@@ -1,6 +1,7 @@
 local CustomizeState = class('CustomizeState', State)
 
 local GameState = require('states/GameState')
+local WonGameState = require('states/WonGameState')
 
 local suit = require('lib/suit')
 
@@ -149,7 +150,8 @@ function CustomizeState:loadLevel(level)
         level = 1
     end
     if level > 10 then
-        level = 10
+        stack:pop()
+        stack:push(WonGameState())
     end
 
     self.level = level
