@@ -5,7 +5,7 @@ local suit = require('lib/suit')
 local texts = {
     won = {
         "You completely obliterated them.",
-        "Your parents will be so proud of you!",
+        "Your parents are extremely proud of you.",
         "Well played.",
         "gg ez"
     },
