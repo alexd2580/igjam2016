@@ -31,10 +31,12 @@ function MenuState:update(dt)
     suit.layout:reset(push:getWidth() - 210, push:getHeight() - 100, 10, 10)
 
     if suit.Button("Start Game", suit.layout:row(200, 40)).hit then
+        resources.sounds.click:clone():play()
         stack:push(CustomizeState(1))
     end
 
     if suit.Button("Credits", suit.layout:row(200, 40)).hit then
+        resources.sounds.click:clone():play()
         stack:push(CreditsState())
     end
 
@@ -87,6 +89,7 @@ end
 
 function MenuState:keypressed(key)
     if key == "space" then
+        resources.sounds.click:play()
         stack:push(CustomizeState(1))
     end
 end

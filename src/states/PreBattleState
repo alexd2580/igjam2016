@@ -1,0 +1,14 @@
+local PreBattleState = class('PreBattleState', State)
+
+local suit = require('lib/suit')
+
+function PreBattleState:update(dt)
+    resources.sounds.startBattle:setVolume(0.7)
+    resources.sounds.startBattle:play()
+    stack:push(GameState(self.level, self.enabledItems))
+end
+
+function PreBattleState:draw()
+end
+
+return PreBattleState
