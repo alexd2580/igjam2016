@@ -46,8 +46,7 @@ function AttackSystem:update(dt)
                 local target = enemy_vector:subtract(member_vector):rotate(rand_rad):add(member_vector)
                 beam:add(LaserBeam(member_vector, target))
                 stack:current().engine:addEntity(beam)
-                local health = enemy_mothership:get("Health")
-                health.points = health.points - weapon.damage
+                stack:current().eventmanager:fireEvent(BulletHitMothership(nil, enemy_mothership, weapon.damage))
                 resources.sounds.laserShot:setVolume(0.05)
                 resources.sounds.laserShot:clone():play()
             elseif weapon.type == 'missile' then

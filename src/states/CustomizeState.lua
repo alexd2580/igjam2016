@@ -139,7 +139,7 @@ end
 function CustomizeState:keypressed(key)
     if key == "space" then
         resources.sounds.click:play()
-        stack:push(GameState(self.level, self.enabledItems))
+        stack:push(GameState(self.level, self.enabledItems, levels[self.level] or default_level))
         return
     end
     if key == "[" then
