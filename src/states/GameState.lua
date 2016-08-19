@@ -147,6 +147,8 @@ function GameState:shoot_bullet(start_pos, dir, speed, enemy_mothership, damage)
     bullet:add(Pulse(0.2))
 
     self.engine:addEntity(bullet)
+
+    -- love.audio.play(resource.music.laserShot)
 end
 
 function is_a_bullet_hit(a, b)

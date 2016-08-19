@@ -10,6 +10,7 @@ State = require('lib/State')
 Stack = require('lib/StackHelper')
 Vector = require('lib/vector')
 local Resources = require('lib/Resources')
+--Shine = require('lib/shine')
 require('lib/tables')
 
 require("components/Drawable")
@@ -65,7 +66,10 @@ function love.load()
     resources:addImage('bg3', 'assets/img/parallax-space-big-planet.png')
     resources:addImage('bg4', 'assets/img/parallax-space-far-planets.png')
     resources:addImage('title', 'assets/img/startScene.png')
+    resources:addImage('hangar', 'assets/img/hangar.png')
     resources:addMusic('bg', 'assets/music/glowing_geometry.mp3')
+    resources:addSound('laserShot', 'assets/music/laserShot_2.mp3')
+    resources:addSound('kaboom_1', 'assets/music/kaboom.ogg')
 
     resources:load()
 
@@ -73,7 +77,8 @@ function love.load()
     require('levels')
 
     resources.music.bg:setLooping(true)
-    -- love.audio.play(resources.music.bg)
+    resources.music.bg:setVolume(0.3)
+    love.audio.play(resources.music.bg)
     game_width, game_height = 512, 448
     local window_width, window_height = love.window.getDesktopDimensions()
 
