@@ -24,12 +24,18 @@ end
 
 function ShieldSystem:draw()
     for _, entity in pairs(self.targets) do
-        if entity:get('Shield').hitTimer > 0 then
-            local x, y = entity:get('Physical').body:getPosition()
+        local shield = entity:get('Shield')
+        local x, y = entity:get('Physical').body:getPosition()
+
+        if shield.hitTimer > 0 then
             local img = resources.images.shield_hit
-            love.graphics.setColor(255, 255, 255, 255 * entity:get('Shield').hitTimer * 2)
+            love.graphics.setColor(255, 255, 255, 255 * shield.hitTimer * 2)
             love.graphics.draw(img, x, y, 0, 1, 1, img:getWidth()/2, img:getHeight()/2)
         end
+
+        love.graphics.setColor(255, 255, 255, 200 * (shield.charge/shield.capacity))
+        local img = resources.images.shield_aura
+        love.graphics.draw(img, x, y, 0, 1, 1, img:getWidth()/2, img:getHeight()/2)
     end
 end
 
