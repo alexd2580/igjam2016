@@ -67,6 +67,13 @@ function love.load()
     resources:addImage('explosion_3', 'assets/img/fighterConfig/explosion_3.png')
     resources:addImage('explosion_4', 'assets/img/fighterConfig/explosion_4.png')
     resources:addImage('explosion_5', 'assets/img/fighterConfig/explosion_5.png')
+
+    resources:addImage('explosion_big1', 'assets/img/fighterConfig/explosionBig1.png')
+    resources:addImage('explosion_big2', 'assets/img/fighterConfig/explosionBig2.png')
+    resources:addImage('explosion_big3', 'assets/img/fighterConfig/explosionBig3.png')
+    resources:addImage('explosion_big4', 'assets/img/fighterConfig/explosionBig4.png')
+    resources:addImage('explosion_big5', 'assets/img/fighterConfig/explosionBig5.png')
+
     resources:addImage('bg1', 'assets/img/parallax-space-background.png')
     resources:addImage('bg2', 'assets/img/parallax-space-stars.png')
     resources:addImage('bg3', 'assets/img/parallax-space-big-planet.png')

@@ -1,7 +1,9 @@
 local DrawSystem = class("DrawSystem", System)
 
 function DrawSystem:draw()
+
     for index, entity in pairs(stack:current().engine.entities) do
+        local not_draw = false
         local images, maxIndex
         if (entity:has('Drawable') or entity:has('LayeredDrawable')) and
             (entity:has('Physical') or entity:has('Transformable')) then
@@ -22,6 +24,11 @@ function DrawSystem:draw()
             if entity:has('Mothership') and entity:has('Health') then
                 local drawable = entity:get('LayeredDrawable')
                 local health = entity:get('Health')
+
+                if health.points <= 0 then
+                    not_draw = true
+                end
+
                 local percent = (health.points/health.max) * 100
 				if percent < 100 and percent >= 80 then
 					drawable:setLayer(2, resources.images.enemy80)
@@ -34,6 +41,7 @@ function DrawSystem:draw()
 				elseif percent < 20 and percent >= 0 then
 					drawable:setLayer(2, resources.images.enemy00)
 				end
+
 			end
             if entity:has('Physical') then
                 local physical = entity:get('Physical')
@@ -60,16 +68,19 @@ function DrawSystem:draw()
                 love.graphics.setColor(5000,5000,5000,255)
             end
 
-            for i = 1, maxIndex, 1 do
-                if images[i] then
-                    love.graphics.draw(images[i],
-                                       entity_x,
-                                       entity_y,
-                                       angle + math.pi / 2,
-                                       sx or 1, sy or 1,
-                                       images[i]:getWidth() / 2,
-                                       images[i]:getHeight() / 2)
-               end
+            if not not_draw then
+
+                for i = 1, maxIndex, 1 do
+                    if images[i] then
+                        love.graphics.draw(images[i],
+                                           entity_x,
+                                           entity_y,
+                                           angle + math.pi / 2,
+                                           sx or 1, sy or 1,
+                                           images[i]:getWidth() / 2,
+                                           images[i]:getHeight() / 2)
+                   end
+                end
             end
 
             love.graphics.setColor(255,255,255,255)
