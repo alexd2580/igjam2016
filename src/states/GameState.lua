@@ -32,7 +32,11 @@ end
 
 function GameState:create_mothership(mothership, x, y, enemy)
     local drawable = LayeredDrawable()
-    drawable:setLayer(1, resources.images.mask_base)
+	if mothership == player then
+		drawable:setLayer(1, resources.images.mask_base)
+	else
+		drawable:setLayer(1, resources.images.enemy100)
+	end
     for layer, id in pairs(self.enabledItems) do
         drawable:setLayer(layer, items[id].image)
     end
@@ -48,7 +52,7 @@ function GameState:create_mothership(mothership, x, y, enemy)
     body:setAngle(-math.pi / 2)
     body:setMass(6)
 
-    mothership:add(Health(100))
+    mothership:add(Health(1000))
     mothership:add(Mothership())
     mothership:add(HasEnemy(enemy))
     mothership:add(Physical(body, fixture, shape))
@@ -81,7 +85,11 @@ function GameState:spawn_swarm(mothership, enemy_mothership)
         drone:add(Physical(body, fixture, shape))
         drone:add(SwarmMember(mothership))
         drone:add(HasEnemy(enemy_mothership))
-        drone:add(Drawable(resources.images.fighter))
+		if mothership == player then
+			drone:add(Drawable(resources.images.fighter))
+		else
+			drone:add(Drawable(resources.images.fighterEnemy))
+		end
         drone:add(Health(100))
         drone:add(HitIndicator())
         self.engine:addEntity(drone)
